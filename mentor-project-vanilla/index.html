@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Create and assign tasks to students - Mentor Dashboard">
+    <title>Create New Task | Student Engagement Platform</title>
+
+    <!-- CSS Stylesheet -->
+    <link rel="stylesheet" href="styles.css">
+
+    <!-- Framer Motion CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/framer-motion@11/dist/framer-motion.js"></script>
+</head>
+
+<body>
+    <!-- Main Container -->
+    <div id="pageContainer" class="page-container">
+
+        <!-- Header Section -->
+        <header class="header">
+            <a href="/dashboard/mentor" class="back-btn" id="backBtn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 12H5M12 19l-7-7 7-7" />
+                </svg>
+                Back to Dashboard
+            </a>
+            <h1 class="title">Create New Task</h1>
+            <p class="subtitle">Assign a task to a student</p>
+        </header>
+
+        <!-- Form Card -->
+        <div id="formCard" class="form-card">
+
+            <!-- Success Message -->
+            <div id="successMessage" class="message success hidden">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+                <span id="successText">Task created successfully!</span>
+            </div>
+
+            <!-- Error Message -->
+            <div id="errorMessage" class="message error hidden">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+                <span id="errorText">An error occurred</span>
+            </div>
+
+            <!-- Form -->
+            <form id="taskForm" class="task-form">
+
+                <!-- Task Title -->
+                <div class="form-field">
+                    <label for="title" class="label">Task Title</label>
+                    <input type="text" id="title" name="title" class="input"
+                        placeholder="e.g. Implement User Authentication" required>
+                </div>
+
+                <!-- Description -->
+                <div class="form-field">
+                    <label for="description" class="label">Description</label>
+                    <textarea id="description" name="description" class="textarea"
+                        placeholder="Provide details about what needs to be done..." rows="4"></textarea>
+                </div>
+
+                <!-- Project and Student Row -->
+                <div class="form-row">
+                    <!-- Project Selector -->
+                    <div class="form-field">
+                        <label for="projectId" class="label">Project</label>
+                        <div class="select-wrapper">
+                            <select id="projectId" name="projectId" class="select" required>
+                                <option value="">Select Project</option>
+                            </select>
+                            <div id="projectLoader" class="loader hidden"></div>
+                        </div>
+                    </div>
+
+                    <!-- Assign To (Student) -->
+                    <div class="form-field">
+                        <label for="assignedTo" class="label">Assign To</label>
+                        <select id="assignedTo" name="assignedTo" class="select" disabled required>
+                            <option value="">Select Student</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Due Date and Priority Row -->
+                <div class="form-row">
+                    <!-- Due Date -->
+                    <div class="form-field">
+                        <label for="dueDate" class="label">Due Date</label>
+                        <input type="date" id="dueDate" name="dueDate" class="input" required>
+                    </div>
+
+                    <!-- Priority -->
+                    <div class="form-field">
+                        <label for="priority" class="label">Priority</label>
+                        <select id="priority" name="priority" class="select">
+                            <option value="Low">Low</option>
+                            <option value="Medium" selected>Medium</option>
+                            <option value="High">High</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" id="submitBtn" class="submit-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    <span id="btnText">Create Task</span>
+                    <div id="btnLoader" class="btn-loader hidden"></div>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- TypeScript Main Script -->
+    <script src="main.js"></script>
+</body>
+
+</html>

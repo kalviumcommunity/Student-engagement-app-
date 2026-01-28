@@ -1,0 +1,285 @@
+/* Mentor Project Details & Analytics Styles */
+
+.mentorDetailsContainer {
+    min-height: 100vh;
+    background-color: #f8fafc;
+    padding: 2.5rem;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    color: #1e293b;
+}
+
+/* Header Section */
+.mentorHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 2.5rem;
+}
+
+.projectName {
+    font-size: 2.75rem;
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    color: #0f172a;
+    margin-bottom: 0.5rem;
+}
+
+.statusBadge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.4rem 1.2rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    background-color: #6366f1;
+    color: white;
+}
+
+.deadlineBox {
+    text-align: right;
+}
+
+.metaLabel {
+    display: block;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.metaValue {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+/* Dashboard Grid */
+.mentorGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+}
+
+/* Analytics Cards */
+.mentorCard {
+    background: white;
+    border-radius: 20px;
+    padding: 2.5rem;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+}
+
+.cardTitle {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    color: #0f172a;
+}
+
+.projectDesc {
+    color: #64748b;
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+}
+
+/* Task Stats Row */
+.taskStats {
+    display: flex;
+    gap: 2.5rem;
+    border-top: 1px solid #f1f5f9;
+    padding-top: 1.5rem;
+}
+
+.statItem {
+    display: flex;
+    flex-direction: column;
+}
+
+.statLabel {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #94a3b8;
+    text-transform: uppercase;
+}
+
+.statValue {
+    font-size: 1.75rem;
+    font-weight: 800;
+}
+
+/* Progress Section */
+.heroProgress {
+    margin-bottom: 2.5rem;
+}
+
+.progressLabelRow {
+    display: flex;
+    justify-content: space-between;
+    font-weight: 700;
+    font-size: 0.875rem;
+    margin-bottom: 0.75rem;
+}
+
+.rail {
+    width: 100%;
+    height: 14px;
+    background-color: #f1f5f9;
+    border-radius: 9999px;
+    overflow: hidden;
+}
+
+.fill {
+    height: 100%;
+    background: linear-gradient(90deg, #6366f1, #a855f7);
+    border-radius: 9999px;
+}
+
+/* Mini Info Cards */
+.miniStatsRow {
+    display: flex;
+    gap: 1rem;
+}
+
+.miniCard {
+    flex: 1;
+    background-color: #f8fafc;
+    padding: 1.25rem;
+    border-radius: 16px;
+    border: 1px solid #e2e8f0;
+}
+
+.miniLabel {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #94a3b8;
+    margin-bottom: 0.25rem;
+}
+
+.miniValue {
+    font-size: 1.5rem;
+    font-weight: 800;
+}
+
+/* Members Table */
+.tableWrapper {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.membersTable {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.membersTable th {
+    text-align: left;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    color: #94a3b8;
+    padding: 1rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.membersTable td {
+    padding: 1.5rem 1rem;
+    border-bottom: 1px solid #f8fafc;
+    font-size: 1rem;
+}
+
+.memberName {
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.memberRole {
+    color: #6366f1;
+    font-weight: 600;
+}
+
+.memberEmail {
+    color: #64748b;
+}
+
+/* Actions Footer */
+.mentorActions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1rem;
+}
+
+.primaryButtonGroup {
+    display: flex;
+    gap: 1rem;
+}
+
+.actionBtn {
+    padding: 0.875rem 1.75rem;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 0.875rem;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+}
+
+.btnSolid {
+    background-color: #6366f1;
+    color: white;
+}
+
+.btnSolid:hover {
+    background-color: #4f46e5;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.3);
+}
+
+.btnGhost {
+    background-color: #f1f5f9;
+    color: #1e293b;
+}
+
+.btnGhost:hover {
+    background-color: #e2e8f0;
+}
+
+.btnOutline {
+    background: transparent;
+    border: 2px solid #e2e8f0;
+    color: #64748b;
+}
+
+.btnOutline:hover {
+    border-color: #94a3b8;
+    color: #1e293b;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .mentorGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .mentorHeader {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1.5rem;
+    }
+
+    .deadlineBox {
+        text-align: left;
+    }
+
+    .mentorDetailsContainer {
+        padding: 1.5rem;
+    }
+}

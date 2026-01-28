@@ -1,0 +1,104 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// Models
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      String   @default("STUDENT") // VALIDATED: Must be "MENTOR" or "STUDENT"
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  projectsOwned    Project[]         @relation("ProjectOwner")
+  projectsJoined   ProjectMember[]
+  tasksAssigned    Task[]
+  feedbackGiven    PeerFeedback[]    @relation("FeedbackFrom")
+  feedbackReceived PeerFeedback[]    @relation("FeedbackTo")
+  logs             EngagementLog[]
+}
+
+model Project {
+  id        String   @id @default(uuid())
+  title     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Foreign Key to Mentor
+  mentorId String
+  mentor   User   @relation("ProjectOwner", fields: [mentorId], references: [id], onDelete: Restrict)
+
+  // Relations
+  members   ProjectMember[]
+  tasks     Task[]
+  feedbacks PeerFeedback[]
+}
+
+model ProjectMember {
+  id       String   @id @default(uuid())
+  joinedAt DateTime @default(now())
+
+  // Foreign Keys
+  userId    String
+  projectId String
+
+  // Relations
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  // Unique constraint ensures a user joins a project only once
+  @@unique([userId, projectId])
+}
+
+model Task {
+  id           String   @id @default(uuid())
+  title        String
+  status       String   @default("TODO") // VALIDATED: Must be "TODO", "IN_PROGRESS", or "DONE"
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Foreign Keys
+  projectId    String
+  assignedToId String?
+
+  // Relations
+  project  Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  assignee User?   @relation(fields: [assignedToId], references: [id], onDelete: SetNull)
+}
+
+model PeerFeedback {
+  id         String   @id @default(uuid())
+  rating     Int      // 1-5
+  comment    String
+  createdAt  DateTime @default(now())
+
+  // Foreign Keys
+  projectId  String
+  fromUserId String
+  toUserId   String
+
+  // Relations
+  project  Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  fromUser User    @relation("FeedbackFrom", fields: [fromUserId], references: [id], onDelete: Cascade)
+  toUser   User    @relation("FeedbackTo", fields: [toUserId], references: [id], onDelete: Cascade)
+}
+
+model EngagementLog {
+  id         String   @id @default(uuid())
+  actionType String   // VALIDATED: Must be "LOGIN", "TASK_UPDATE", "FEEDBACK", or "MEMBER_REMOVED"
+  details    String?
+  createdAt  DateTime @default(now())
+
+  // Foreign Key
+  userId String
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}

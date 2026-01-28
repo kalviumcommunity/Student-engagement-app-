@@ -1,0 +1,294 @@
+/* Student Project Details Styles */
+
+.detailsContainer {
+    min-height: 100vh;
+    background-color: #f8fafc;
+    padding: 2rem;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    color: #1e293b;
+}
+
+/* Header Section */
+.header {
+    margin-bottom: 2rem;
+}
+
+.backBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #64748b;
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    transition: color 0.2s;
+}
+
+.backBtn:hover {
+    color: #2563eb;
+}
+
+.titleRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.title {
+    font-size: 2.25rem;
+    font-weight: 800;
+    margin: 0;
+    letter-spacing: -0.025em;
+    color: #0f172a;
+}
+
+/* Status Badges */
+.badge {
+    padding: 0.5rem 1rem;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+}
+
+.badgeActive {
+    background-color: #dcfce7;
+    color: #15803d;
+}
+
+.badgeCompleted {
+    background-color: #f1f5f9;
+    color: #475569;
+}
+
+/* Project Info Card */
+.infoCard {
+    background: white;
+    padding: 2rem;
+    border-radius: 16px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2.5rem;
+    border: 1px solid #e2e8f0;
+}
+
+.description {
+    font-size: 1.125rem;
+    line-height: 1.6;
+    color: #334155;
+    margin: 0 0 2rem 0;
+}
+
+.metaGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid #f1f5f9;
+}
+
+.metaItem {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.metaLabel {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.metaValue {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1e293b;
+}
+
+/* Sections */
+.section {
+    margin-bottom: 3rem;
+}
+
+.sectionTitle {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+/* Task Table/List */
+.taskList {
+    background: white;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    overflow: hidden;
+}
+
+.taskItem {
+    display: grid;
+    grid-template-columns: 2fr 1.5fr 1fr 0.5fr;
+    align-items: center;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid #f1f5f9;
+    transition: background-color 0.2s;
+}
+
+.taskItem:last-child {
+    border-bottom: none;
+}
+
+.taskItem:hover {
+    background-color: #f8fafc;
+}
+
+.taskHeader {
+    background-color: #f8fafc;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.75rem 1.5rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.taskTitle {
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.taskDate {
+    font-size: 0.875rem;
+    color: #64748b;
+}
+
+.taskStatus {
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.25rem 0.6rem;
+    border-radius: 6px;
+    width: fit-content;
+}
+
+.statusTodo {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.statusDoing {
+    background: #e0f2fe;
+    color: #0369a1;
+}
+
+.statusDone {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.viewBtn {
+    color: #2563eb;
+    font-weight: 600;
+    font-size: 0.875rem;
+    text-decoration: none;
+}
+
+.viewBtn:hover {
+    text-decoration: underline;
+}
+
+/* Feedback Section */
+.feedbackGrid {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.feedbackItem {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    border-top: 4px solid #6366f1;
+}
+
+.feedbackHeader {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
+.mentorName {
+    font-weight: 700;
+    color: #334155;
+}
+
+.feedbackDate {
+    font-size: 0.8125rem;
+    color: #94a3b8;
+}
+
+.feedbackText {
+    color: #475569;
+    line-height: 1.6;
+    font-style: italic;
+    margin: 0;
+}
+
+/* Loading & Error */
+.loadingContainer,
+.errorContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 60vh;
+}
+
+.spinner {
+    width: 48px;
+    height: 48px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #2563eb;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 1.5rem;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.errorText {
+    color: #ef4444;
+    font-weight: 600;
+    font-size: 1.125rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .taskItem {
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+
+    .taskItem>*:nth-child(n+3) {
+        display: none;
+    }
+
+    .title {
+        font-size: 1.75rem;
+    }
+}

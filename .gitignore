@@ -39,3 +39,22 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+/app/generated/prisma
+
+# prisma compiled/generated files
+prisma/seed_dist/
+backend/prisma/seed_dist/
+
+# database
+dev.db
+dev.db-journal
+test.db
+
+# debug scripts and logs
+debug-*.js
+test-*.js
+health-check.js
+*_error.txt
+*-results.txt
+generate_log.txt
