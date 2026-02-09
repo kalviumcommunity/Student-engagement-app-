@@ -1,0 +1,11 @@
+
+./app/api/auth/logout/route.ts
+1:10  Error: 'NextRequest' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./components/ui/Button.tsx
+3:10  Error: 'ButtonHTMLAttributes' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./components/ui/Input.tsx
+3:10  Error: 'InputHTMLAttributes' is defined but never used.  @typescript-eslint/no-unused-vars
+
+info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/app/api-reference/config/eslint#disabling-rules

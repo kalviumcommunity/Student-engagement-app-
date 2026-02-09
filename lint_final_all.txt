@@ -1,0 +1,17 @@
+
+./app/api/auth/logout/route.ts
+5:28  Error: '_request' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./components/ui/Button.tsx
+47:27  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./components/ui/Input.tsx
+55:35  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./lib/db.ts
+30:5  Warning: Unused eslint-disable directive (no problems were reported from 'no-var').
+
+./lib/models.ts
+1:28  Error: 'model' is defined but never used.  @typescript-eslint/no-unused-vars
+
+info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/app/api-reference/config/eslint#disabling-rules

@@ -10,7 +10,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+// import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Variants } from "framer-motion";
 import { useAuth, getAuthHeaders } from '@/contexts/AuthContext';

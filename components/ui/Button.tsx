@@ -1,9 +1,9 @@
 'use client';
 
-import { ButtonHTMLAttributes, ReactNode } from 'react';
-import { motion } from 'framer-motion';
+import { ReactNode } from 'react';
+import { motion, HTMLMotionProps } from 'framer-motion';
 
-interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+interface ButtonProps extends HTMLMotionProps<"button"> {
     children: ReactNode;
     variant?: 'primary' | 'secondary' | 'danger' | 'ghost';
     size?: 'sm' | 'md' | 'lg';
@@ -44,7 +44,7 @@ export default function Button({
             whileTap={{ scale: disabled || isLoading ? 1 : 0.98 }}
             className={`${baseStyles} ${variants[variant]} ${sizes[size]} ${widthClass} ${className}`}
             disabled={disabled || isLoading}
-            {...(props as any)}
+            {...props}
         >
             {isLoading ? (
                 <>

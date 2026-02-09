@@ -1,9 +1,9 @@
 'use client';
 
-import { InputHTMLAttributes, useState } from 'react';
-import { motion } from 'framer-motion';
+import { useState } from 'react';
+import { motion, HTMLMotionProps } from 'framer-motion';
 
-interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
+interface InputProps extends HTMLMotionProps<"input"> {
     label?: string;
     error?: string;
     icon?: React.ReactNode;
@@ -52,7 +52,7 @@ export default function Input({
           `}
                     onFocus={() => setIsFocused(true)}
                     onBlur={() => setIsFocused(false)}
-                    {...(props as any)}
+                    {...props}
                 />
             </div>
 

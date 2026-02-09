@@ -6,7 +6,8 @@ const nextConfig = {
     ignoreDuringBuilds: true,
   },
   // Netlify deployment configuration
-  serverExternalPackages: ['bcryptjs'],
+  // Netlify deployment configuration
+  // serverExternalPackages: [],
 };
 
 export default nextConfig;

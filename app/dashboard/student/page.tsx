@@ -175,7 +175,7 @@ export default function StudentDashboard() {
                 });
 
                 // Transform tasks data to match component interface
-                const transformedTasks: Task[] = tasksData.map((t: any) => ({
+                const transformedTasks: Task[] = tasksData.map((t: { id: string; title: string; createdAt: string; status: string }) => ({
                     id: t.id,
                     title: t.title,
                     dueDate: new Date(t.createdAt).toLocaleDateString(),
