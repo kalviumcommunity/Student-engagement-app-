@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+export const dynamic = 'force-dynamic';
 import { prisma } from "@/lib/db"; // Assuming @ alias works, if not we can use relative path
 
 export async function GET(
