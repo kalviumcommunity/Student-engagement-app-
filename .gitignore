@@ -87,3 +87,12 @@ next.config.js
 # generated Prisma client (should be regenerated)
 /generated/
 
+
+# Deployment logs and temp files
+build_*.txt
+lint_*.txt
+install_log.txt
+lint-output.json
+*.log
+error_extract.txt
+rebuild.txt
