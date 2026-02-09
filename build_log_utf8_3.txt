@@ -1,0 +1,105 @@
+﻿
+> student-engagement-app@0.1.0 build
+> next build
+
+   Γû▓ Next.js 15.1.6
+   - Environments: .env
+
+   Creating an optimized production build ...
+ Γ£ô Compiled successfully
+   Linting and checking validity of types ...
+node.exe :  Γ¿» 
+ESLint: nextVitals 
+is not iterable
+At line:1 char:1
++ & "C:\Program Files
+\nodejs/node.exe" 
+"C:\Program 
+Files\nodejs/node_mo 
+...
++ ~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~
+    + CategoryInfo   
+           : 
+NotSpecified: (     
+Γ¿» ESLint: 
+nextVital    s is 
+not iterable:Str    
+ing) [], 
+RemoteExcept    ion
+    + 
+FullyQualifiedError  
+  Id : 
+NativeCommandErr    
+or
+ 
+Failed to compile.
+
+./app/api/projects/[p
+rojectId]/members/[us
+erId]/route.ts:50:57
+Type error: Property 
+'_id' does not exist 
+on type 
+'(FlattenMaps<any> & 
+Required<{ _id: 
+unknown; }> & { __v: 
+number; })[] | 
+(FlattenMaps<any> & 
+Required<{ _id: 
+unknown; }> & { __v: 
+number; })'.
+  Property '_id' 
+does not exist on 
+type 
+'(FlattenMaps<any> & 
+Required<{ _id: 
+unknown; }> & { __v: 
+number; })[]'.
+
+[0m [90m 48 |[39m 
+        }[0m
+[0m [90m 49 
+|[39m[0m
+[0m[31m[1m>[22m[
+39m[90m 50 |[39m   
+      
+[36mconst[39m 
+project [33m=[39m 
+{ [33m...[39mprojec
+tDoc[33m,[39m 
+id[33m:[39m project
+Doc[33m.[39m_id[33
+m.[39mtoString()[33
+m,[39m 
+mentorId[33m:[39m p
+rojectDoc[33m.[39mm
+entorId[33m.[39mtoS
+tring() 
+}[33m;[39m[0m
+[0m [90m    |[39m 
+                     
+                     
+              [31m[
+1m^[22m[39m[0m
+[0m [90m 51 |[39m 
+        [90m// 
+Verify that the 
+logged-in mentor 
+owns this 
+project[39m[0m
+[0m [90m 52 |[39m 
+        [36mif[39m 
+(project[33m.[39mme
+ntorId [33m!==[39m 
+loggedInUserId) {[0m
+[0m [90m 53 |[39m 
+            
+[36mreturn[39m [33
+mNextResponse[39m[3
+3m.[39mjson([0m
+Static worker exited 
+with code: 1 and 
+signal: null

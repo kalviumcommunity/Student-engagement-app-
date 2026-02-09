@@ -1,0 +1,80 @@
+﻿
+> student-engagement-app@0.1.0 build
+> next build
+
+   Γû▓ Next.js 15.1.6
+   - Environments: .env
+
+   Creating an optimized production build ...
+ Γ£ô Compiled successfully
+   Skipping validation of types
+   Linting ...
+node.exe : 
+At line:1 char:1
++ & "C:\Program 
+Files\nodejs/node.exe" 
+"C:\Program 
+Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo        
+      : NotSpecified: (:  
+  String) [], RemoteExc   
+ eption
+    + FullyQualifiedError 
+   Id : NativeCommandErr  
+  or
+ 
+Failed to compile.
+
+./app/api/auth/logout/rout
+e.ts
+5:28  Error: '_request' 
+is defined but never 
+used.  @typescript-eslint/
+no-unused-vars
+
+./app/dashboard/student/pa
+ge.tsx
+177:68  Error: Unexpected 
+any. Specify a different 
+type.  @typescript-eslint/
+no-explicit-any
+
+./app/feedback/page.tsx
+13:10  Error: 'useRouter' 
+is defined but never 
+used.  @typescript-eslint/
+no-unused-vars
+
+./components/ui/Button.tsx
+47:27  Error: Unexpected 
+any. Specify a different 
+type.  @typescript-eslint/
+no-explicit-any
+
+./components/ui/Input.tsx
+55:35  Error: Unexpected 
+any. Specify a different 
+type.  @typescript-eslint/
+no-explicit-any
+
+./lib/db.ts
+30:5  Warning: Unused 
+eslint-disable directive 
+(no problems were 
+reported from 'no-var').
+
+./lib/models.ts
+1:28  Error: 'model' is 
+defined but never used.  @
+typescript-eslint/no-unuse
+d-vars
+
+info  - Need to disable 
+some ESLint rules? Learn 
+more here: https://nextjs.
+org/docs/app/api-reference
+/config/eslint#disabling-r
+ules

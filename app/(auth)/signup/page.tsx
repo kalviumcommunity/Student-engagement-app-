@@ -19,8 +19,6 @@ import {
     GraduationCap,
     School,
     User,
-    Mail,
-    Lock,
     Chrome,
     Github,
     AlertCircle
@@ -67,8 +65,8 @@ export default function SignupPage() {
         try {
             await register(formData.name, formData.email, formData.password, formData.role);
             setSuccess(true);
-        } catch (err: any) {
-            setError(err.message);
+        } catch (err: unknown) {
+            setError(err instanceof Error ? err.message : 'An error occurred during registration');
             setIsLoading(false);
         }
     };
@@ -100,7 +98,7 @@ export default function SignupPage() {
                     </div>
                     <h2 className={styles.title}>Account Created!</h2>
                     <p className={styles.subtitle}>
-                        Welcome to the platform. We're getting things ready for you...
+                        Welcome to the platform. We&apos;re getting things ready for you...
                     </p>
                     <div style={{ marginTop: '2rem', display: 'flex', justifyContent: 'center' }}>
                         <Loader2 className={styles.spinner} color="#6366f1" size={32} />

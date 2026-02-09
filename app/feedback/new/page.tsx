@@ -111,7 +111,7 @@ export default function CreateFeedbackPage() {
 
                 setMembers(mockMembers);
                 setProjects(mockProjects);
-            } catch (err) {
+            } catch {
                 setError('Failed to load form data. Please refresh.');
             } finally {
                 setIsPageLoading(false);
@@ -147,7 +147,7 @@ export default function CreateFeedbackPage() {
                 router.push('/feedback');
             }, 2000);
 
-        } catch (err) {
+        } catch {
             setError('Something went wrong during submission. Please try again.');
         } finally {
             setIsSubmitting(false);

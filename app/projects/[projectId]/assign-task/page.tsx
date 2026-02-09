@@ -52,12 +52,12 @@ export default function AssignTaskPage({ params }: PageProps) {
 
                 // Filter to only show students
                 const studentMembers = (membersData.members || []).filter(
-                    (m: any) => m.role === 'STUDENT'
+                    (m: { role: string }) => m.role === 'STUDENT'
                 );
 
                 setStudents(studentMembers);
-            } catch (err: any) {
-                setError(err.message);
+            } catch (err: unknown) {
+                setError(err instanceof Error ? err.message : 'An error occurred fetching members');
             } finally {
                 setIsLoading(false);
             }
@@ -115,8 +115,8 @@ export default function AssignTaskPage({ params }: PageProps) {
             setTimeout(() => {
                 router.push(`/projects/${projectId}`);
             }, 1500);
-        } catch (err: any) {
-            setError(err.message);
+        } catch (err: unknown) {
+            setError(err instanceof Error ? err.message : 'An error occurred assigning task');
         } finally {
             setIsSubmitting(false);
         }

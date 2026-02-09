@@ -1,0 +1,119 @@
+﻿
+> student-engagement-app@0.1.0 build
+> next build
+
+   Γû▓ Next.js 15.1.6
+   - Environments: .env
+
+   Creating an optimized production build ...
+ Γ£ô Compiled successfully
+   Linting and checking validity of types ...
+
+   We detected TypeScript in your project and reconfigured your tsconfig.json file for you.
+   The following mandatory changes were made to your tsconfig.json:
+
+   	- jsx was set to preserve (next.js implements its own optimized jsx transform)
+
+node.exe :  Γ¿» 
+ESLint: Cannot find 
+module 'C:\Users\LAYA
+SREE\Desktop\wi proj\
+Student-engagement-ap
+p-\node_modules\eslin
+t-config-next\core-we
+b-vitals' imported 
+from C:\Users\LAYASRE
+E\Desktop\wi proj\Stu
+dent-engagement-app-\
+eslint.config.mjs 
+Did you mean to 
+import "eslint-config
+-next/core-web-vitals
+.js"?
+At line:1 char:1
++ & "C:\Program Files
+\nodejs/node.exe" 
+"C:\Program 
+Files\nodejs/node_mo 
+...
++ ~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~
+    + CategoryInfo   
+           : NotSpe  
+  cified: ( Γ¿» ES   
+ Lint: Ca...web-v    
+itals.js"?:Strin    
+g) [], RemoteExc    
+eption
+    + FullyQualified 
+   ErrorId : Native  
+  CommandError
+ 
+Failed to compile.
+
+./app/api/auth/login/
+route.ts:46:58
+Type error: Property 
+'_id' does not exist 
+on type 
+'(FlattenMaps<any> & 
+Required<{ _id: 
+unknown; }> & { __v: 
+number; })[] | 
+(FlattenMaps<any> & 
+Required<{ _id: 
+unknown; }> & { __v: 
+number; })'.
+  Property '_id' 
+does not exist on 
+type 
+'(FlattenMaps<any> & 
+Required<{ _id: 
+unknown; }> & { __v: 
+number; })[]'.
+
+[0m [90m 44 |[39m 
+        [90m// Find 
+user by 
+email[39m[0m
+[0m [90m 45 |[39m 
+        
+[36mconst[39m 
+userDoc [33m=[39m 
+[36mawait[39m [33m
+User[39m[33m.[39mf
+indOne({ email })[33
+m.[39mlean()[33m;[
+39m[0m
+[0m[31m[1m>[22m[
+39m[90m 46 |[39m   
+      
+[36mconst[39m user 
+[33m=[39m userDoc 
+[33m?[39m { [33m..
+.[39muserDoc[33m,[
+39m id[33m:[39m use
+rDoc[33m.[39m_id[3
+3m.[39mtoString() } 
+[33m:[39m [36mnull
+[39m[33m;[39m[0m
+[0m [90m    |[39m 
+                     
+                     
+               [31m
+[1m^[22m[39m[0m
+[0m [90m 47 
+|[39m[0m
+[0m [90m 48 |[39m 
+        [90m// 
+Check if user 
+exists[39m[0m
+[0m [90m 49 |[39m 
+        [36mif[39m 
+([33m![39muser) 
+{[0m
+Static worker exited 
+with code: 1 and 
+signal: null

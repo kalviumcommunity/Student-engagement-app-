@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 export const dynamic = 'force-dynamic';
-import { prisma } from "@/lib/db";
+import dbConnect, { ActionType, logEngagement, LeanTask, LeanProject } from "@/lib/db";
+import { Task } from "@/lib/models";
 
 export async function GET(
     request: Request,
@@ -31,27 +32,31 @@ export async function GET(
             );
         }
 
+        // Connect to database
+        await dbConnect();
+
         // 3. Fetch Task with Project relation
         // We need the project relation to check mentor ownership
-        const task = await prisma.task.findUnique({
-            where: { id: taskId },
-            include: {
-                project: {
-                    select: {
-                        id: true,
-                        mentorId: true,
-                    },
-                },
-            },
-        });
+        const taskDoc = await Task.findById(taskId).populate('projectId').lean() as unknown as (LeanTask & { projectId: LeanProject });
 
         // Handle Task Not Found
-        if (!task) {
+        if (!taskDoc) {
             return NextResponse.json(
                 { error: "Task not found" },
                 { status: 404 }
             );
         }
+
+        const task = {
+            ...taskDoc,
+            id: taskDoc._id.toString(),
+            projectId: taskDoc.projectId._id.toString(),
+            assignedToId: taskDoc.assignedToId ? taskDoc.assignedToId.toString() : null,
+            project: {
+                id: taskDoc.projectId._id.toString(),
+                mentorId: taskDoc.projectId.mentorId.toString()
+            }
+        };
 
         // Defensive: Ensure project relation exists
         // This should always be true due to schema constraints, but defensive programming is good
@@ -95,8 +100,8 @@ export async function GET(
             },
             { status: 200 }
         );
-    } catch (error) {
-        console.error("Error fetching task details:", error);
+    } catch (err) {
+        console.error("Error fetching task details:", err);
         return NextResponse.json(
             { error: "Internal server error" },
             { status: 500 }
@@ -132,27 +137,30 @@ export async function PUT(
             );
         }
 
+        // Connect to database
+        await dbConnect();
+
         // STEP 3: Fetch Task with Project
         // ================================
-        const task = await prisma.task.findUnique({
-            where: { id: taskId },
-            include: {
-                project: {
-                    select: {
-                        id: true,
-                        title: true,
-                        mentorId: true,
-                    },
-                },
-            },
-        });
+        const taskDoc = await Task.findById(taskId).populate('projectId').lean() as unknown as (LeanTask & { projectId: LeanProject });
 
-        if (!task) {
+        if (!taskDoc) {
             return NextResponse.json(
                 { error: "Task not found" },
                 { status: 404 }
             );
         }
+
+        const task = {
+            ...taskDoc,
+            id: taskDoc._id.toString(),
+            projectId: taskDoc.projectId._id.toString(),
+            assignedToId: taskDoc.assignedToId ? taskDoc.assignedToId.toString() : null,
+            project: {
+                id: taskDoc.projectId._id.toString(),
+                mentorId: taskDoc.projectId.mentorId.toString()
+            }
+        };
 
         // STEP 4: Authorization
         // =====================
@@ -179,7 +187,7 @@ export async function PUT(
         const { title, status, assignedToId } = body;
 
         // Build update data object (only include provided fields)
-        const updateData: any = {};
+        const updateData: Partial<LeanTask> = {};
 
         if (title !== undefined) {
             if (title.trim() === "") {
@@ -216,20 +224,29 @@ export async function PUT(
 
         // STEP 6: Update Task
         // ===================
-        const updatedTask = await prisma.task.update({
-            where: { id: taskId },
-            data: updateData,
-        });
+        const updatedTaskDoc = await Task.findByIdAndUpdate(
+            taskId,
+            updateData,
+            { new: true }
+        ).lean() as unknown as LeanTask;
+
+        if (!updatedTaskDoc) {
+            return NextResponse.json(
+                { error: "Failed to update task" },
+                { status: 500 }
+            );
+        }
+
+        const updatedTask = {
+            ...updatedTaskDoc,
+            id: updatedTaskDoc._id.toString(),
+            projectId: updatedTaskDoc.projectId.toString(),
+            assignedToId: updatedTaskDoc.assignedToId ? updatedTaskDoc.assignedToId.toString() : null
+        };
 
         // STEP 7: Log Engagement
         // ======================
-        await prisma.engagementLog.create({
-            data: {
-                userId: loggedInUserId,
-                actionType: "TASK_UPDATE",
-                details: `Updated task: ${updatedTask.title}`,
-            },
-        });
+        await logEngagement(loggedInUserId, ActionType.TASK_UPDATE, `Updated task: ${updatedTask.title}`);
 
         // STEP 8: Return Updated Task
         // ============================
@@ -240,14 +257,14 @@ export async function PUT(
                 status: updatedTask.status,
                 projectId: updatedTask.projectId,
                 assignedToId: updatedTask.assignedToId,
-                createdAt: updatedTask.createdAt,
-                updatedAt: updatedTask.updatedAt,
+                createdAt: (updatedTask as unknown as LeanTask).createdAt,
+                updatedAt: (updatedTask as unknown as LeanTask).updatedAt,
             },
             { status: 200 }
         );
 
-    } catch (error) {
-        console.error("Error updating task:", error);
+    } catch (err) {
+        console.error("Error updating task:", err);
         return NextResponse.json(
             { error: "Internal server error" },
             { status: 500 }
@@ -292,26 +309,29 @@ export async function DELETE(
             );
         }
 
+        // Connect to database
+        await dbConnect();
+
         // STEP 4: Fetch Task with Project
         // ================================
-        const task = await prisma.task.findUnique({
-            where: { id: taskId },
-            include: {
-                project: {
-                    select: {
-                        id: true,
-                        mentorId: true,
-                    },
-                },
-            },
-        });
+        const taskDoc = await Task.findById(taskId).populate('projectId').lean() as unknown as (LeanTask & { projectId: LeanProject });
 
-        if (!task) {
+        if (!taskDoc) {
             return NextResponse.json(
                 { error: "Task not found" },
                 { status: 404 }
             );
         }
+
+        const task = {
+            ...taskDoc,
+            id: taskDoc._id.toString(),
+            projectId: taskDoc.projectId._id.toString(),
+            project: {
+                id: taskDoc.projectId._id.toString(),
+                mentorId: taskDoc.projectId.mentorId.toString()
+            }
+        };
 
         // STEP 5: Verify Ownership
         // =========================
@@ -325,9 +345,7 @@ export async function DELETE(
 
         // STEP 6: Delete Task
         // ===================
-        await prisma.task.delete({
-            where: { id: taskId },
-        });
+        await Task.findByIdAndDelete(taskId);
 
         // STEP 7: Return Success
         // ======================
@@ -336,8 +354,8 @@ export async function DELETE(
             { status: 200 }
         );
 
-    } catch (error) {
-        console.error("Error deleting task:", error);
+    } catch (err) {
+        console.error("Error fetching task:", err);
         return NextResponse.json(
             { error: "Internal server error" },
             { status: 500 }

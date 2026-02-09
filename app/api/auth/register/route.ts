@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 export const dynamic = 'force-dynamic';
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { prisma, Role, ActionType, logEngagement } from "@/lib/db";
+import dbConnect, { Role, ActionType, logEngagement, LeanUser } from "@/lib/db";
+import { User } from "@/lib/models";
 
 import { z } from "zod";
 
@@ -38,10 +39,11 @@ export async function POST(request: NextRequest) {
 
         const { name, email, password, role } = validationResult.data;
 
+        // Connect to database
+        await dbConnect();
+
         // Check if user already exists
-        const existingUser = await prisma.user.findUnique({
-            where: { email },
-        });
+        const existingUser = await User.findOne({ email }).lean() as unknown as LeanUser;
 
         if (existingUser) {
             return NextResponse.json(
@@ -57,21 +59,20 @@ export async function POST(request: NextRequest) {
         const hashedPassword = await bcrypt.hash(password, 10);
 
         // Create user
-        const user = await prisma.user.create({
-            data: {
-                name,
-                email,
-                password: hashedPassword,
-                role: role as Role,
-            },
-            select: {
-                id: true,
-                name: true,
-                email: true,
-                role: true,
-                createdAt: true,
-            },
+        const newUserDoc = await User.create({
+            name,
+            email,
+            password: hashedPassword,
+            role: role as Role,
         });
+
+        const user = {
+            id: newUserDoc._id.toString(),
+            name: newUserDoc.name,
+            email: newUserDoc.email,
+            role: newUserDoc.role,
+            createdAt: newUserDoc.createdAt,
+        };
 
         // Log the registration
         await logEngagement(user.id, ActionType.LOGIN, "User registered");
@@ -110,18 +111,11 @@ export async function POST(request: NextRequest) {
         });
 
         return response;
-    } catch (error) {
-        console.error("Registration error:", error);
-
-        // Log detailed error information for debugging
-        if (error instanceof Error) {
-            console.error("Error name:", error.name);
-            console.error("Error message:", error.message);
-            console.error("Error stack:", error.stack);
-        }
+    } catch (err) {
+        console.error("Registration error:", err);
 
         // Check for database connection errors
-        const errorMessage = error instanceof Error ? error.message : String(error);
+        const errorMessage = err instanceof Error ? err.message : String(err);
         if (errorMessage.includes("Can't reach database") ||
             errorMessage.includes("Connection") ||
             errorMessage.includes("ECONNREFUSED")) {

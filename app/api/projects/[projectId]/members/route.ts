@@ -1,272 +1,125 @@
 import { NextResponse } from "next/server";
 export const dynamic = 'force-dynamic';
-import { prisma } from "@/lib/db"; // Assuming @ alias works, if not we can use relative path
+import dbConnect, { Role, LeanProject, LeanProjectMember, LeanUser } from "@/lib/db";
+import { Project, ProjectMember, User } from "@/lib/models";
 
+// ============================================
+// GET /api/projects/[projectId]/members
+// ============================================
 export async function GET(
     request: Request,
     props: { params: Promise<{ projectId: string }> }
 ) {
     try {
-        // 1. Get Project ID from URL (Next.js 15: params is a Promise)
-        const params = await props.params;
-        const projectId = params.projectId;
-
-        // 2. Authentication: Read headers (Temporary Auth)
         const userId = request.headers.get("x-user-id");
         const userRole = request.headers.get("x-user-role");
 
-        // Check if user is logged in
         if (!userId) {
-            return NextResponse.json(
-                { error: "Unauthorized: Missing User ID" },
-                { status: 401 }
-            );
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
-        // 3. Fetch Project (including Mentor info)
-        // We need the mentor ID to check ownership access
-        const project = await prisma.project.findUnique({
-            where: { id: projectId },
-            include: {
-                mentor: {
-                    select: {
-                        id: true,
-                        name: true,
-                        role: true,
-                    },
-                },
-            },
-        });
+        const params = await props.params;
+        const projectId = params.projectId;
 
-        // Handle Project Not Found
+        await dbConnect();
+
+        const project = await Project.findById(projectId).lean() as unknown as LeanProject;
         if (!project) {
-            return NextResponse.json(
-                { error: "Project not found" },
-                { status: 404 }
-            );
+            return NextResponse.json({ error: "Project not found" }, { status: 404 });
         }
 
-        // 4. Authorization & Security
-        // Access allowed if:
-        // a) User is the Mentor (Project Owner)
-        // b) User is a Project Member
-
-        const isMentor = project.mentorId === userId;
-        let isMember = false;
-
-        // If not mentor, check if they are a member in the database
-        // This optimization avoids fetching all members if access is denied later
-        if (!isMentor) {
-            const membership = await prisma.projectMember.findUnique({
-                where: {
-                    userId_projectId: {
-                        userId: userId,
-                        projectId: projectId,
-                    },
-                },
-            });
-            if (membership) {
-                isMember = true;
+        if (userRole === Role.MENTOR) {
+            if (project.mentorId.toString() !== userId) {
+                return NextResponse.json({ error: "Forbidden" }, { status: 403 });
             }
         }
 
-        // If neither mentor nor member, deny access
-        if (!isMentor && !isMember) {
-            return NextResponse.json(
-                { error: "Access denied: You are not a member of this project" },
-                { status: 403 }
-            );
-        }
+        const memberDocs = await ProjectMember.find({ projectId }).populate('userId').lean() as unknown as (LeanProjectMember & { userId: LeanUser })[];
 
-        // 5. Fetch Members
-        // Fetch all members associated with this project
-        const projectMembers = await prisma.projectMember.findMany({
-            where: { projectId: projectId },
-            include: {
-                user: {
-                    select: {
-                        id: true,
-                        name: true,
-                        role: true,
-                    },
-                },
-            },
-        });
+        const members = memberDocs.map(m => ({
+            id: m._id.toString(),
+            userId: m.userId._id.toString(),
+            name: m.userId.name,
+            email: m.userId.email,
+            role: m.userId.role,
+            joinedAt: m.joinedAt,
+        }));
 
-        // 6. Construct Response List
-        // Convert DB result to a clean array of users
-        const membersList = projectMembers.map((pm) => pm.user);
-
-        // Ensure Mentor is in the list (if not already there)
-        // Sometimes the mentor might not be in the 'ProjectMember' table
-        const isMentorInList = membersList.some((m) => m.id === project.mentor.id);
-        if (!isMentorInList) {
-            // Add mentor to the top of the list
-            membersList.unshift(project.mentor);
-        }
-
-        // 7. Return Structured Response
-        return NextResponse.json({
-            projectId: projectId,
-            members: membersList,
-        }, { status: 200 });
-
-    } catch (error) {
-        console.error("Error fetching project members:", error);
-        return NextResponse.json(
-            { error: "Internal server error" },
-            { status: 500 }
-        );
+        return NextResponse.json(members, { status: 200 });
+    } catch (err) {
+        console.error("Error fetching members:", err);
+        return NextResponse.json({ error: "Internal server error" }, { status: 500 });
     }
 }
 
 // ============================================
 // POST /api/projects/[projectId]/members
 // ============================================
-// Adds a new member to a project
-// Only MENTORS (project owners) can add members
-
 export async function POST(
     request: Request,
     props: { params: Promise<{ projectId: string }> }
 ) {
     try {
-        // STEP 1: Get Project ID from URL
-        // ================================
-        const params = await props.params;
-        const projectId = params.projectId;
-
-        // STEP 2: Authentication
-        // ======================
         const userId = request.headers.get("x-user-id");
         const userRole = request.headers.get("x-user-role");
 
         if (!userId) {
-            return NextResponse.json(
-                { error: "Unauthorized: Missing authentication credentials" },
-                { status: 401 }
-            );
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
-        // STEP 3: Authorization - Mentor Only
-        // ====================================
-        // Only mentors can add members to projects
-        if (userRole !== "MENTOR") {
-            return NextResponse.json(
-                { error: "Only mentors can add members to projects" },
-                { status: 403 }
-            );
+        if (userRole !== Role.MENTOR) {
+            return NextResponse.json({ error: "Only mentors can add members" }, { status: 403 });
         }
 
-        // STEP 4: Verify Project Exists and User is Owner
-        // ================================================
-        const project = await prisma.project.findUnique({
-            where: { id: projectId },
-        });
+        const params = await props.params;
+        const projectId = params.projectId;
 
+        await dbConnect();
+
+        const project = await Project.findById(projectId).lean() as unknown as LeanProject;
         if (!project) {
-            return NextResponse.json(
-                { error: "Project not found" },
-                { status: 404 }
-            );
+            return NextResponse.json({ error: "Project not found" }, { status: 404 });
         }
 
-        // Verify the logged-in mentor owns this project
-        if (project.mentorId !== userId) {
-            return NextResponse.json(
-                { error: "Access denied: You can only add members to your own projects" },
-                { status: 403 }
-            );
+        if (project.mentorId.toString() !== userId) {
+            return NextResponse.json({ error: "Forbidden" }, { status: 403 });
         }
 
-        // STEP 5: Parse Request Body
-        // ===========================
         const body = await request.json();
-        const { userId: memberUserId } = body;
+        const { email } = body;
 
-        if (!memberUserId) {
-            return NextResponse.json(
-                { error: "Missing required field: userId" },
-                { status: 400 }
-            );
+        if (!email) {
+            return NextResponse.json({ error: "Email is required" }, { status: 400 });
         }
 
-        // STEP 6: Verify User Exists and is a Student
-        // ============================================
-        const userToAdd = await prisma.user.findUnique({
-            where: { id: memberUserId },
-        });
-
+        const userToAdd = await User.findOne({ email }).lean() as unknown as LeanUser;
         if (!userToAdd) {
-            return NextResponse.json(
-                { error: "User not found" },
-                { status: 404 }
-            );
+            return NextResponse.json({ error: "User not found" }, { status: 404 });
         }
 
-        // Only students can be added as project members
-        if (userToAdd.role !== "STUDENT") {
-            return NextResponse.json(
-                { error: "Only students can be added as project members" },
-                { status: 400 }
-            );
-        }
-
-        // STEP 7: Check if Already a Member
-        // ==================================
-        const existingMembership = await prisma.projectMember.findUnique({
-            where: {
-                userId_projectId: {
-                    userId: memberUserId,
-                    projectId: projectId,
-                },
-            },
+        const existingMember = await ProjectMember.findOne({
+            projectId: projectId,
+            userId: userToAdd._id,
         });
 
-        if (existingMembership) {
-            return NextResponse.json(
-                { error: "User is already a member of this project" },
-                { status: 409 } // Conflict
-            );
+        if (existingMember) {
+            return NextResponse.json({ error: "User is already a member" }, { status: 400 });
         }
 
-        // STEP 8: Add Member to Project
-        // ==============================
-        const projectMember = await prisma.projectMember.create({
-            data: {
-                userId: memberUserId,
-                projectId: projectId,
-            },
-            include: {
-                user: {
-                    select: {
-                        id: true,
-                        name: true,
-                        email: true,
-                        role: true,
-                    },
-                },
-            },
+        const newMember = await ProjectMember.create({
+            projectId: projectId,
+            userId: userToAdd._id,
         });
 
-        // STEP 9: Return Success Response
-        // ================================
-        return NextResponse.json(
-            {
-                id: projectMember.id,
-                userId: projectMember.userId,
-                projectId: projectMember.projectId,
-                joinedAt: projectMember.joinedAt,
-                user: projectMember.user,
-            },
-            { status: 201 }
-        );
+        return NextResponse.json({
+            id: newMember._id.toString(),
+            userId: userToAdd._id.toString(),
+            name: userToAdd.name,
+            message: "Member added successfully",
+        }, { status: 201 });
 
-    } catch (error) {
-        console.error("Error adding project member:", error);
-        return NextResponse.json(
-            { error: "Internal server error" },
-            { status: 500 }
-        );
+    } catch (err) {
+        console.error("Error adding member:", err);
+        return NextResponse.json({ error: "Internal server error" }, { status: 500 });
     }
 }

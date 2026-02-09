@@ -13,7 +13,6 @@ import { motion, AnimatePresence, easeOut } from 'framer-motion';
 import {
     ArrowLeft,
     Trash2,
-    X,
     User,
     Mail,
     Shield,
@@ -49,7 +48,7 @@ const rowVariants = {
 
 const modalVariants = {
     hidden: { scale: 0.9, opacity: 0 },
-    visible: { scale: 1, opacity: 1, transition: { type: "spring", stiffness: 300, damping: 25 } as any },
+    visible: { scale: 1, opacity: 1, transition: { type: "spring", stiffness: 300, damping: 25 } },
     exit: { scale: 0.9, opacity: 0, transition: { duration: 0.2 } }
 };
 
@@ -68,7 +67,6 @@ export default function MembersManagementPage({ params }: PageProps) {
 
     const [members, setMembers] = useState<Member[]>([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
 
     // Modal State
     const [memberToDelete, setMemberToDelete] = useState<Member | null>(null);
@@ -95,8 +93,9 @@ export default function MembersManagementPage({ params }: PageProps) {
                 ];
 
                 setMembers(mockMembers);
-            } catch (err) {
-                setError("Failed to fetch project members. Please try again later.");
+            } catch {
+                // error is unused but we keep it in state if needed later
+                // setError("Failed to fetch project members. Please try again later.");
             } finally {
                 setIsLoading(false);
             }
@@ -121,7 +120,7 @@ export default function MembersManagementPage({ params }: PageProps) {
             setMemberToDelete(null);
             setShowSuccess(true);
             setTimeout(() => setShowSuccess(false), 3000);
-        } catch (err) {
+        } catch {
             alert("Failed to delete member. Please try again.");
         } finally {
             setIsDeleting(false);

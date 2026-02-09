@@ -2,7 +2,6 @@
 
 import { useState, FormEvent } from 'react';
 import { useAuth, getAuthHeaders } from '@/contexts/AuthContext';
-import { useRouter } from 'next/navigation';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { motion } from 'framer-motion';
 import { FolderPlus, ArrowLeft } from 'lucide-react';
@@ -13,7 +12,6 @@ import Link from 'next/link';
 
 export default function CreateProjectPage() {
     const { user } = useAuth();
-    const router = useRouter();
     const [title, setTitle] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
@@ -42,11 +40,11 @@ export default function CreateProjectPage() {
             }
 
 
-            const project = await res.json();
+            await res.json();
             // Redirect back to mentor dashboard and force reload to show new project
             window.location.href = '/dashboard/mentor';
-        } catch (err: any) {
-            setError(err.message);
+        } catch (err: unknown) {
+            setError(err instanceof Error ? err.message : 'An error occurred during project creation');
         } finally {
             setIsLoading(false);
         }

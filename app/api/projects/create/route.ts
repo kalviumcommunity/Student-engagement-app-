@@ -1,29 +1,17 @@
 import { NextResponse } from "next/server";
 export const dynamic = 'force-dynamic';
-import { prisma, Role } from "@/lib/db";
+import dbConnect, { Role, LeanProject } from "@/lib/db";
+import { Project, ProjectMember } from "@/lib/models";
+import mongoose from "mongoose";
 
 // ============================================
 // POST /api/projects/create
 // ============================================
-// Creates a new project
-// Only MENTORS can create projects
-// This route is specifically created for the vanilla Create Project page demo
-
-interface CreateProjectBody {
-    title: string;
-    description?: string;
-    category?: string;
-    startDate?: string;
-    endDate?: string;
-}
-
 export async function POST(request: Request) {
     try {
-        // 1. Read Authentication Headers
         const userId = request.headers.get("x-user-id");
         const userRole = request.headers.get("x-user-role");
 
-        // 2. Authentication Check
         if (!userId) {
             return NextResponse.json(
                 { error: "Unauthorized: You must be logged in" },
@@ -31,7 +19,6 @@ export async function POST(request: Request) {
             );
         }
 
-        // 3. Authorization Check
         if (userRole !== Role.MENTOR) {
             return NextResponse.json(
                 { error: "Only mentors can create projects" },
@@ -39,20 +26,9 @@ export async function POST(request: Request) {
             );
         }
 
-        // 4. Parse Request Body
-        let body: CreateProjectBody;
-        try {
-            body = await request.json();
-        } catch (e) {
-            return NextResponse.json(
-                { error: "Invalid JSON body" },
-                { status: 400 }
-            );
-        }
+        const body = await request.json();
+        const { title } = body;
 
-        const { title, description, category, startDate, endDate } = body;
-
-        // 5. Validation
         if (!title || title.trim() === "") {
             return NextResponse.json(
                 { error: "Project title is required" },
@@ -62,48 +38,51 @@ export async function POST(request: Request) {
 
         const trimmedTitle = title.trim();
 
-        // 6. Database Operation (Transactional)
-        // Note: Prisma schema only supports 'title' and 'mentorId' for projects currently.
-        // description, category, startDate, and endDate are ignored for database storage 
-        // to avoid schema migration requirements, but they are accepted by the API.
-        const result = await prisma.$transaction(async (tx) => {
-            // Step A: Create the Project
-            const project = await tx.project.create({
-                data: {
-                    title: trimmedTitle,
-                    mentorId: userId,
-                },
-            });
+        await dbConnect();
 
-            // Step B: Add Mentor as Member
-            await tx.projectMember.create({
-                data: {
-                    userId: userId,
-                    projectId: project.id,
-                },
-            });
+        const session = await mongoose.startSession();
+        let result;
 
-            return project;
-        });
+        try {
+            session.startTransaction();
 
-        // 7. Response
+            const projectBatch = await Project.create([{
+                title: trimmedTitle,
+                mentorId: userId,
+            }], { session });
+
+            result = projectBatch[0] as unknown as LeanProject;
+
+            await ProjectMember.create([{
+                userId: userId,
+                projectId: result._id,
+            }], { session });
+
+            await session.commitTransaction();
+        } catch (txnError) {
+            await session.abortTransaction();
+            throw txnError;
+        } finally {
+            session.endSession();
+        }
+
         return NextResponse.json(
             {
-                projectId: result.id,
+                projectId: result._id.toString(),
                 title: result.title,
-                message: "Project created successfully! (Extra fields like description were received but not stored due to schema limits)",
+                message: "Project created successfully!",
                 createdAt: result.createdAt,
             },
             { status: 201 }
         );
 
-    } catch (error: any) {
-        console.error("Error in /api/projects/create:", error);
+    } catch (err) {
+        console.error("Error in /api/projects/create:", err);
+        const errorMessage = err instanceof Error ? err.message : "Internal server error";
         return NextResponse.json(
             {
                 error: "Internal server error",
-                details: error.message,
-                stack: error.stack
+                details: errorMessage,
             },
             { status: 500 }
         );

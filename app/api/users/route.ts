@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 export const dynamic = 'force-dynamic';
-import { prisma } from "@/lib/db";
+import dbConnect, { LeanUser } from "@/lib/db";
+import { User } from "@/lib/models";
 
 /**
  * GET /api/users
@@ -10,9 +11,7 @@ import { prisma } from "@/lib/db";
  */
 export async function GET(request: Request) {
     try {
-        // Authentication
         const userId = request.headers.get("x-user-id");
-        const userRole = request.headers.get("x-user-role");
 
         if (!userId) {
             return NextResponse.json(
@@ -21,37 +20,33 @@ export async function GET(request: Request) {
             );
         }
 
-        // Get query parameters
         const { searchParams } = new URL(request.url);
-        const roleFilter = searchParams.get("role"); // Optional: filter by role
+        const roleFilter = searchParams.get("role");
 
-        // Build query
-        const where: any = {};
+        await dbConnect();
 
-        // If role filter is provided, use it
+        const query: { role?: string } = {};
         if (roleFilter && (roleFilter === "STUDENT" || roleFilter === "MENTOR")) {
-            where.role = roleFilter;
+            query.role = roleFilter;
         }
 
-        // Fetch users
-        const users = await prisma.user.findMany({
-            where,
-            select: {
-                id: true,
-                name: true,
-                email: true,
-                role: true,
-                createdAt: true,
-            },
-            orderBy: {
-                name: "asc",
-            },
-        });
+        const userDocs = await User.find(query)
+            .select('name email role createdAt')
+            .sort({ name: 1 })
+            .lean() as LeanUser[];
+
+        const users = userDocs.map((u: LeanUser) => ({
+            id: u._id.toString(),
+            name: u.name,
+            email: u.email,
+            role: u.role,
+            createdAt: u.createdAt,
+        }));
 
         return NextResponse.json(users, { status: 200 });
 
-    } catch (error) {
-        console.error("Error fetching users:", error);
+    } catch (err) {
+        console.error("Error in users API:", err);
         return NextResponse.json(
             { error: "Internal server error" },
             { status: 500 }

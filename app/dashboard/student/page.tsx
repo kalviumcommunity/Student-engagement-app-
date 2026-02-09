@@ -18,9 +18,7 @@ import {
     CheckSquare,
     MessageSquare,
     TrendingUp,
-    LayoutDashboard,
     LogOut,
-    ChevronRight,
     Clock,
     Search,
     Bell
@@ -75,7 +73,7 @@ const itemVariants: Variants = {
     visible: {
         y: 0,
         opacity: 1,
-        transition: { type: 'spring', stiffness: 300, damping: 24 } as any,
+        transition: { type: 'spring', stiffness: 300, damping: 24 },
     },
 };
 
@@ -84,7 +82,7 @@ const cardVariants: Variants = {
     visible: {
         scale: 1,
         opacity: 1,
-        transition: { type: 'spring', stiffness: 300, damping: 24 } as any,
+        transition: { type: 'spring', stiffness: 300, damping: 24 },
     },
 };
 
@@ -151,11 +149,11 @@ export default function StudentDashboard() {
                 const feedbackData = await feedbackRes.json();
 
                 // Transform projects data to match component interface
-                const transformedProjects: Project[] = projectsData.map((p: any) => {
+                const transformedProjects: Project[] = projectsData.map((p: { id: string; title: string; createdAt: string }) => {
                     // Get all tasks for this project
-                    const projectTasks = tasksData.filter((t: any) => t.projectId === p.id);
+                    const projectTasks = tasksData.filter((t: { projectId: string; status: string }) => t.projectId === p.id);
                     const totalTasks = projectTasks.length;
-                    const completedTasks = projectTasks.filter((t: any) => t.status === 'DONE').length;
+                    const completedTasks = projectTasks.filter((t: { projectId: string; status: string }) => t.status === 'DONE').length;
 
                     // Determine status based on task completion
                     let status: 'In Progress' | 'Completed' | 'Not Started';
@@ -184,7 +182,7 @@ export default function StudentDashboard() {
                 }));
 
                 // Transform feedback data to match component interface
-                const transformedFeedback: Feedback[] = feedbackData.map((f: any) => ({
+                const transformedFeedback: Feedback[] = feedbackData.map((f: { id: string; fromUser?: { name?: string }; project?: { title?: string }; comment?: string; createdAt: string }) => ({
                     id: f.id,
                     fromUser: f.fromUser?.name || 'Unknown User',
                     project: f.project?.title || 'Unknown Project',
@@ -199,8 +197,8 @@ export default function StudentDashboard() {
                     totalProjects: transformedProjects.length,
                     totalTasks: transformedTasks.length,
                     feedbackCount: transformedFeedback.length,
-                    completionRate: tasksData.filter((t: any) => t.status === 'DONE').length > 0
-                        ? Math.round((tasksData.filter((t: any) => t.status === 'DONE').length / tasksData.length) * 100)
+                    completionRate: tasksData.filter((t: { status: string }) => t.status === 'DONE').length > 0
+                        ? Math.round(((tasksData as { status: string }[]).filter((t: { status: string }) => t.status === 'DONE').length / tasksData.length) * 100)
                         : 0,
                 });
 
@@ -388,7 +386,7 @@ export default function StudentDashboard() {
                                             <span className="mentorName">{item.fromUser}</span>
                                             <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>{item.project}</span>
                                         </div>
-                                        <p className="feedbackText">"{item.comment}"</p>
+                                        <p className="feedbackText">&quot;{item.comment}&quot;</p>
                                     </motion.div>
                                 ))}
                             </AnimatePresence>

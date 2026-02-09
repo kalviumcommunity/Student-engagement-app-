@@ -51,8 +51,8 @@ export default function GiveFeedbackPage() {
 
                 const data = await res.json();
                 setProjects(data);
-            } catch (err: any) {
-                setError(err.message);
+            } catch (err: unknown) {
+                setError(err instanceof Error ? err.message : 'An error occurred fetching projects');
             } finally {
                 setIsLoading(false);
             }
@@ -79,11 +79,11 @@ export default function GiveFeedbackPage() {
 
                 // Filter out current user and only show students
                 const filteredTeammates = (data.members || [])
-                    .filter((m: any) => m.id !== user.id && m.role === 'STUDENT');
+                    .filter((m: { id: string; role: string }) => m.id !== user.id && m.role === 'STUDENT');
 
                 setTeammates(filteredTeammates);
-            } catch (err: any) {
-                setError(err.message);
+            } catch (err: unknown) {
+                setError(err instanceof Error ? err.message : 'An error occurred fetching teammates');
             }
         };
 
@@ -149,8 +149,8 @@ export default function GiveFeedbackPage() {
             setTimeout(() => {
                 router.push('/dashboard/student');
             }, 2000);
-        } catch (err: any) {
-            setError(err.message);
+        } catch (err: unknown) {
+            setError(err instanceof Error ? err.message : 'An error occurred submitting feedback');
         } finally {
             setIsSubmitting(false);
         }
@@ -190,7 +190,7 @@ export default function GiveFeedbackPage() {
                         Give Peer Feedback
                     </h1>
                     <p className="pageSubtitle">
-                        Share your thoughts and rate your teammates' contributions
+                        Share your thoughts and rate your teammates&apos; contributions
                     </p>
                 </motion.div>
 

@@ -1,101 +1,35 @@
-'use client';
+"use client";
 
-/**
- * ============================================
- * LOGOUT PAGE
- * Clean, Simple, Functional
- * Tech Stack: Next.js App Router, CSS Modules
- * ============================================
- */
-
-import { useState, useEffect } from 'react';
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { useAuth } from '@/contexts/AuthContext';
-import { LogOut, Loader2 } from 'lucide-react';
-import styles from './logout.module.css';
+import { LogOut } from "lucide-react";
 
 export default function LogoutPage() {
     const { logout } = useAuth();
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState('');
-    const [success, setSuccess] = useState(false);
+    const router = useRouter();
 
-    /**
-     * Handles the logout process using AuthContext
-     */
-    const handleLogout = async () => {
-        setIsLoading(true);
-        setError('');
+    useEffect(() => {
+        const performLogout = async () => {
+            try {
+                await logout();
+                router.push("/login");
+            } catch (error) {
+                console.error("Logout failed:", error);
+                router.push("/login");
+            }
+        };
 
-        try {
-            await logout();
-            setSuccess(true);
-        } catch (err: any) {
-            console.error('Logout Error:', err);
-            setError(err.message || 'An unexpected error occurred');
-            setIsLoading(false);
-        }
-    };
-
-    /**
-     * Cancel logout and return to previous page
-     */
-    const handleCancel = () => {
-        window.history.back();
-    };
+        performLogout();
+    }, [logout, router]);
 
     return (
-        <div className={styles.container}>
-            <div className={styles.card}>
-
-                {/* Icon */}
-                <div className={styles.iconWrapper}>
-                    <LogOut size={32} />
-                </div>
-
-                {/* Content */}
-                <h1 className={styles.title}>
-                    Are you sure you want to logout?
-                </h1>
-
-                <p className={styles.subtitle}>
-                    You will need to log in again to access your dashboard.
-                </p>
-
-                {/* Status Messages */}
-                {error && <div className={styles.error}>{error}</div>}
-
-                {success && (
-                    <div className={styles.success}>
-                        Success! Redirecting to login...
-                    </div>
-                )}
-
-                {/* Actions */}
-                <div className={styles.buttonGroup}>
-                    <button
-                        onClick={handleLogout}
-                        className={styles.logoutButton}
-                        disabled={isLoading || success}
-                    >
-                        {isLoading ? (
-                            <>
-                                <Loader2 className={styles.spinner} size={18} />
-                                Logging out...
-                            </>
-                        ) : (
-                            'Logout'
-                        )}
-                    </button>
-
-                    <button
-                        onClick={handleCancel}
-                        className={styles.cancelButton}
-                        disabled={isLoading || success}
-                    >
-                        Cancel
-                    </button>
-                </div>
+        <div className="min-h-screen bg-black flex flex-col items-center justify-center p-4">
+            <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mb-6 animate-pulse">
+                <LogOut className="text-white w-8 h-8" />
             </div>
+            <h1 className="text-2xl font-bold text-white mb-2">Logging out...</h1>
+            <p className="text-gray-400">Please wait while we secure your session.</p>
         </div>
     );
 }

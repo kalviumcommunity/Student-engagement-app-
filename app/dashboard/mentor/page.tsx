@@ -12,7 +12,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
-import { motion, AnimatePresence, Variants } from 'framer-motion';
+import { motion, Variants } from 'framer-motion';
 import {
     Users,
     Briefcase,
@@ -20,7 +20,6 @@ import {
     Clock,
     ExternalLink,
     LogOut,
-    Bell,
     Search,
     LayoutDashboard,
     ShieldCheck,

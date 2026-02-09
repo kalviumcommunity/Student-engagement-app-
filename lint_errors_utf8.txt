@@ -1,99 +1,62 @@
 ﻿
-> student-engagement-app@0.1.0 lint
-> eslint
-
-
-C:\Users\LAYASREE\Desktop\wi proj\Student-engagement-app-\app\(auth)\login\page.tsx
-  19:5   warning  'Mail' is defined but never used          @typescript-eslint/no-unused-vars
-  20:5   warning  'Lock' is defined but never used          @typescript-eslint/no-unused-vars
-  47:23  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-
 C:\Users\LAYASREE\Desktop\wi proj\Student-engagement-app-\app\(auth)\logout\page.tsx
-  11:20  warning  'useEffect' is defined but never used     @typescript-eslint/no-unused-vars
-  32:23  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  11:20  error  'useEffect' is defined but never used  @typescript-eslint/no-unused-vars
 
 C:\Users\LAYASREE\Desktop\wi proj\Student-engagement-app-\app\(auth)\signup\page.tsx
-   22:5   warning  'Mail' is defined but never used                                 @typescript-eslint/no-unused-vars
-   23:5   warning  'Lock' is defined but never used                                 @typescript-eslint/no-unused-vars
-   70:23  error    Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
-  103:52  error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
-
-C:\Users\LAYASREE\Desktop\wi proj\Student-engagement-app-\app\api\analytics\project\[projectId]\route.ts
-  111:15  warning  'memberUserIdSet' is assigned a value but never used  @typescript-eslint/no-unused-vars
+   22:5   error  'Mail' is defined but never used                                 @typescript-eslint/no-unused-vars
+   23:5   error  'Lock' is defined but never used                                 @typescript-eslint/no-unused-vars
+   70:23  error  Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+  103:52  error  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
 
 C:\Users\LAYASREE\Desktop\wi proj\Student-engagement-app-\app\api\auth\login\route.ts
-   90:27  warning  '_' is assigned a value but never used  @typescript-eslint/no-unused-vars
-  178:14  warning  'error' is defined but never used       @typescript-eslint/no-unused-vars
+  5:21  error  'Role' is defined but never used  @typescript-eslint/no-unused-vars
 
 C:\Users\LAYASREE\Desktop\wi proj\Student-engagement-app-\app\api\auth\logout\route.ts
-  3:28  warning  'request' is defined but never used  @typescript-eslint/no-unused-vars
-
-C:\Users\LAYASREE\Desktop\wi proj\Student-engagement-app-\app\api\engagement\route.ts
-  15:15  warning  'userRole' is assigned a value but never used   @typescript-eslint/no-unused-vars
-  27:17  warning  'projectId' is assigned a value but never used  @typescript-eslint/no-unused-vars
-
-C:\Users\LAYASREE\Desktop\wi proj\Student-engagement-app-\app\api\feedback\route.ts
-  153:15  warning  'userRole' is assigned a value but never used  @typescript-eslint/no-unused-vars
-  169:18  warning  'e' is defined but never used                  @typescript-eslint/no-unused-vars
-
-C:\Users\LAYASREE\Desktop\wi proj\Student-engagement-app-\app\api\projects\[projectId]\members\route.ts
-  15:15  warning  'userRole' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  5:28  error  'request' is defined but never used  @typescript-eslint/no-unused-vars
 
 C:\Users\LAYASREE\Desktop\wi proj\Student-engagement-app-\app\api\projects\create\route.ts
-  45:18  warning  'e' is defined but never used                     @typescript-eslint/no-unused-vars
-  52:24  warning  'description' is assigned a value but never used  @typescript-eslint/no-unused-vars
-  52:37  warning  'category' is assigned a value but never used     @typescript-eslint/no-unused-vars
-  52:47  warning  'startDate' is assigned a value but never used    @typescript-eslint/no-unused-vars
-  52:58  warning  'endDate' is assigned a value but never used      @typescript-eslint/no-unused-vars
-  99:21  error    Unexpected any. Specify a different type          @typescript-eslint/no-explicit-any
+  3:40  error  'LeanUser' is defined but never used  @typescript-eslint/no-unused-vars
+  4:34  error  'User' is defined but never used      @typescript-eslint/no-unused-vars
 
 C:\Users\LAYASREE\Desktop\wi proj\Student-engagement-app-\app\api\projects\route.ts
-  169:18  warning  'e' is defined but never used  @typescript-eslint/no-unused-vars
+  4:34  error  'Task' is defined but never used          @typescript-eslint/no-unused-vars
+  4:40  error  'PeerFeedback' is defined but never used  @typescript-eslint/no-unused-vars
 
 C:\Users\LAYASREE\Desktop\wi proj\Student-engagement-app-\app\api\tasks\[taskId]\route.ts
-  181:27  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-
-C:\Users\LAYASREE\Desktop\wi proj\Student-engagement-app-\app\api\tasks\route.ts
-  164:18  warning  'e' is defined but never used  @typescript-eslint/no-unused-vars
+  3:21  error  'Role' is defined but never used  @typescript-eslint/no-unused-vars
 
 C:\Users\LAYASREE\Desktop\wi proj\Student-engagement-app-\app\api\users\route.ts
-  14:15  warning  'userRole' is assigned a value but never used  @typescript-eslint/no-unused-vars
-  28:22  error    Unexpected any. Specify a different type       @typescript-eslint/no-explicit-any
+  28:22  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
 
 C:\Users\LAYASREE\Desktop\wi proj\Student-engagement-app-\app\dashboard\mentor\page.tsx
-   15:18  warning  'AnimatePresence' is defined but never used  @typescript-eslint/no-unused-vars
-   23:5   warning  'Bell' is defined but never used             @typescript-eslint/no-unused-vars
-   80:14  error    Unexpected any. Specify a different type     @typescript-eslint/no-explicit-any
-  143:77  error    Unexpected any. Specify a different type     @typescript-eslint/no-explicit-any
-  151:61  error    Unexpected any. Specify a different type     @typescript-eslint/no-explicit-any
-  158:55  error    Unexpected any. Specify a different type     @typescript-eslint/no-explicit-any
-  165:82  error    Unexpected any. Specify a different type     @typescript-eslint/no-explicit-any
+  15:18  error  'AnimatePresence' is defined but never used  @typescript-eslint/no-unused-vars
+  23:5   error  'Bell' is defined but never used             @typescript-eslint/no-unused-vars
 
 C:\Users\LAYASREE\Desktop\wi proj\Student-engagement-app-\app\dashboard\student\page.tsx
-   21:5   warning  'LayoutDashboard' is defined but never used                      @typescript-eslint/no-unused-vars
-   23:5   warning  'ChevronRight' is defined but never used                         @typescript-eslint/no-unused-vars
-   77:72  error    Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
-   86:72  error    Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
-  153:77  error    Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
-  155:63  error    Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
-  157:68  error    Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
-  178:68  error    Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
-  186:78  error    Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
-  201:58  error    Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
-  202:60  error    Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
-  390:69  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
-  390:84  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+   21:5   error  'LayoutDashboard' is defined but never used                      @typescript-eslint/no-unused-vars
+   23:5   error  'ChevronRight' is defined but never used                         @typescript-eslint/no-unused-vars
+   78:72  error  Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+   87:72  error  Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+  154:77  error  Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+  156:63  error  Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+  158:68  error  Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+  179:68  error  Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+  187:78  error  Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+  202:58  error  Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+  203:60  error  Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+  391:69  error  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  391:84  error  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
 
 C:\Users\LAYASREE\Desktop\wi proj\Student-engagement-app-\app\feedback\new\page.tsx
-  114:22  warning  'err' is defined but never used  @typescript-eslint/no-unused-vars
-  150:18  warning  'err' is defined but never used  @typescript-eslint/no-unused-vars
+  114:22  error  'err' is defined but never used  @typescript-eslint/no-unused-vars
+  150:18  error  'err' is defined but never used  @typescript-eslint/no-unused-vars
 
 C:\Users\LAYASREE\Desktop\wi proj\Student-engagement-app-\app\feedback\page.tsx
-   62:11  warning  'router' is assigned a value but never used                      @typescript-eslint/no-unused-vars
-   96:78  error    Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
-  106:27  error    Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
-  194:37  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
-  194:52  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+   62:11  error  'router' is assigned a value but never used                      @typescript-eslint/no-unused-vars
+   96:78  error  Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+  106:27  error  Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+  194:37  error  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  194:52  error  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
 
 C:\Users\LAYASREE\Desktop\wi proj\Student-engagement-app-\app\give-feedback\page.tsx
    54:27  error  Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
@@ -112,27 +75,27 @@ C:\Users\LAYASREE\Desktop\wi proj\Student-engagement-app-\app\projects\[projectI
   118:23  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
 
 C:\Users\LAYASREE\Desktop\wi proj\Student-engagement-app-\app\projects\[projectId]\members\page.tsx
-   16:5    warning  'X' is defined but never used               @typescript-eslint/no-unused-vars
-   52:101  error    Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
-   71:12   warning  'error' is assigned a value but never used  @typescript-eslint/no-unused-vars
-   98:22   warning  'err' is defined but never used             @typescript-eslint/no-unused-vars
-  124:18   warning  'err' is defined but never used             @typescript-eslint/no-unused-vars
+   16:5    error  'X' is defined but never used               @typescript-eslint/no-unused-vars
+   52:101  error  Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+   71:12   error  'error' is assigned a value but never used  @typescript-eslint/no-unused-vars
+   98:22   error  'err' is defined but never used             @typescript-eslint/no-unused-vars
+  124:18   error  'err' is defined but never used             @typescript-eslint/no-unused-vars
 
 C:\Users\LAYASREE\Desktop\wi proj\Student-engagement-app-\app\projects\[projectId]\page.tsx
-   12:18  warning  'AnimatePresence' is defined but never used  @typescript-eslint/no-unused-vars
-   17:5   warning  'LayoutGrid' is defined but never used       @typescript-eslint/no-unused-vars
-   65:72  error    Unexpected any. Specify a different type     @typescript-eslint/no-explicit-any
-  111:58  error    Unexpected any. Specify a different type     @typescript-eslint/no-explicit-any
-  122:55  error    Unexpected any. Specify a different type     @typescript-eslint/no-explicit-any
-  132:33  error    Unexpected any. Specify a different type     @typescript-eslint/no-explicit-any
-  133:30  error    Unexpected any. Specify a different type     @typescript-eslint/no-explicit-any
-  141:64  error    Unexpected any. Specify a different type     @typescript-eslint/no-explicit-any
-  161:27  error    Unexpected any. Specify a different type     @typescript-eslint/no-explicit-any
+   12:18  error  'AnimatePresence' is defined but never used  @typescript-eslint/no-unused-vars
+   17:5   error  'LayoutGrid' is defined but never used       @typescript-eslint/no-unused-vars
+   65:72  error  Unexpected any. Specify a different type     @typescript-eslint/no-explicit-any
+  111:58  error  Unexpected any. Specify a different type     @typescript-eslint/no-explicit-any
+  122:55  error  Unexpected any. Specify a different type     @typescript-eslint/no-explicit-any
+  132:33  error  Unexpected any. Specify a different type     @typescript-eslint/no-explicit-any
+  133:30  error  Unexpected any. Specify a different type     @typescript-eslint/no-explicit-any
+  141:64  error  Unexpected any. Specify a different type     @typescript-eslint/no-explicit-any
+  161:27  error  Unexpected any. Specify a different type     @typescript-eslint/no-explicit-any
 
 C:\Users\LAYASREE\Desktop\wi proj\Student-engagement-app-\app\projects\create\page.tsx
-  16:11  warning  'router' is assigned a value but never used   @typescript-eslint/no-unused-vars
-  45:19  warning  'project' is assigned a value but never used  @typescript-eslint/no-unused-vars
-  48:23  error    Unexpected any. Specify a different type      @typescript-eslint/no-explicit-any
+  16:11  error  'router' is assigned a value but never used   @typescript-eslint/no-unused-vars
+  45:19  error  'project' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  48:23  error  Unexpected any. Specify a different type      @typescript-eslint/no-explicit-any
 
 C:\Users\LAYASREE\Desktop\wi proj\Student-engagement-app-\app\tasks\[taskId]\page.tsx
    63:72  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
@@ -141,14 +104,14 @@ C:\Users\LAYASREE\Desktop\wi proj\Student-engagement-app-\app\tasks\[taskId]\pag
   180:23  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
 
 C:\Users\LAYASREE\Desktop\wi proj\Student-engagement-app-\app\tasks\create\page.tsx
-   19:5   warning  'Calendar' is defined but never used      @typescript-eslint/no-unused-vars
-   20:5   warning  'Flag' is defined but never used          @typescript-eslint/no-unused-vars
-   21:5   warning  'User' is defined but never used          @typescript-eslint/no-unused-vars
-   22:5   warning  'Briefcase' is defined but never used     @typescript-eslint/no-unused-vars
-  114:62  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-  120:22  warning  'err' is defined but never used           @typescript-eslint/no-unused-vars
-  153:67  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-  165:22  warning  'err' is defined but never used           @typescript-eslint/no-unused-vars
+   19:5   error  'Calendar' is defined but never used      @typescript-eslint/no-unused-vars
+   20:5   error  'Flag' is defined but never used          @typescript-eslint/no-unused-vars
+   21:5   error  'User' is defined but never used          @typescript-eslint/no-unused-vars
+   22:5   error  'Briefcase' is defined but never used     @typescript-eslint/no-unused-vars
+  114:62  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  120:22  error  'err' is defined but never used           @typescript-eslint/no-unused-vars
+  153:67  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  165:22  error  'err' is defined but never used           @typescript-eslint/no-unused-vars
 
 C:\Users\LAYASREE\Desktop\wi proj\Student-engagement-app-\components\ui\Button.tsx
   47:27  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
@@ -156,5 +119,15 @@ C:\Users\LAYASREE\Desktop\wi proj\Student-engagement-app-\components\ui\Button.t
 C:\Users\LAYASREE\Desktop\wi proj\Student-engagement-app-\components\ui\Input.tsx
   55:35  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
 
-Γ£û 97 problems (54 errors, 43 warnings)
+C:\Users\LAYASREE\Desktop\wi proj\Student-engagement-app-\lib\db.ts
+  30:5  warning  Unused eslint-disable directive (no problems were reported from 'no-var')
+
+C:\Users\LAYASREE\Desktop\wi proj\Student-engagement-app-\lib\models.ts
+  1:28  error  'Document' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\LAYASREE\Desktop\wi proj\Student-engagement-app-\next.config.ts
+  1:15  error  'NextConfig' is defined but never used  @typescript-eslint/no-unused-vars
+
+Γ£û 79 problems (78 errors, 1 warning)
+  0 errors and 1 warning potentially fixable with the `--fix` option.
 

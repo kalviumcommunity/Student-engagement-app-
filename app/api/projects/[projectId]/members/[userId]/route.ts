@@ -1,6 +1,16 @@
 import { NextResponse } from "next/server";
 export const dynamic = 'force-dynamic';
-import { prisma } from "@/lib/db";
+import dbConnect from "@/lib/db";
+import { Project, ProjectMember, Task, EngagementLog } from "@/lib/models";
+import mongoose from "mongoose";
+
+interface LeanProject {
+    _id: mongoose.Types.ObjectId;
+    title: string;
+    mentorId: mongoose.Types.ObjectId;
+    createdAt: Date;
+    updatedAt: Date;
+}
 
 export async function DELETE(
     request: Request,
@@ -32,20 +42,21 @@ export async function DELETE(
             );
         }
 
+        // Connect to database
+        await dbConnect();
+
         // 4. Fetch Project and verify ownership
-        const project = await prisma.project.findUnique({
-            where: { id: projectId },
-            select: { id: true, mentorId: true, title: true },
-        });
+        const projectDoc = await Project.findById(projectId).lean() as unknown as LeanProject;
 
         // Handle Project Not Found
-        if (!project) {
+        if (!projectDoc) {
             return NextResponse.json(
                 { error: "Project not found" },
                 { status: 404 }
             );
         }
 
+        const project = { ...projectDoc, id: projectDoc._id.toString(), mentorId: projectDoc.mentorId.toString() };
         // Verify that the logged-in mentor owns this project
         if (project.mentorId !== loggedInUserId) {
             return NextResponse.json(
@@ -64,15 +75,10 @@ export async function DELETE(
         }
 
         // 6. Validate that the user is actually a member of this project
-        const membership = await prisma.projectMember.findUnique({
-            where: {
-                userId_projectId: {
-                    userId: userId,
-                    projectId: projectId,
-                },
-            },
+        const membership = await ProjectMember.findOne({
+            userId: userId,
+            projectId: projectId,
         });
-
         if (!membership) {
             return NextResponse.json(
                 { error: "User is not a member of this project" },
@@ -80,41 +86,35 @@ export async function DELETE(
             );
         }
 
-        // 7. Perform Database Operations in a Transaction
-        // This ensures all operations succeed or fail together
-        await prisma.$transaction(async (tx) => {
-            // Step 1: Unassign all tasks assigned to this user in this project
-            // We set assignedToId to null instead of deleting to preserve project history
-            await tx.task.updateMany({
-                where: {
-                    projectId: projectId,
-                    assignedToId: userId,
-                },
-                data: {
-                    assignedToId: null,
-                },
-            });
+        // 7. Perform Database Operations
+        const session = await mongoose.startSession();
+        try {
+            session.startTransaction();
+
+            // Step 1: Unassign all tasks
+            await Task.updateMany(
+                { projectId: projectId, assignedToId: userId },
+                { assignedToId: null },
+                { session }
+            );
 
             // Step 2: Delete the ProjectMember record
-            await tx.projectMember.delete({
-                where: {
-                    userId_projectId: {
-                        userId: userId,
-                        projectId: projectId,
-                    },
-                },
-            });
+            await ProjectMember.deleteOne({ userId, projectId }, { session });
 
             // Step 3: Log the engagement activity
-            await tx.engagementLog.create({
-                data: {
-                    userId: loggedInUserId, // The mentor who performed the action
-                    actionType: "MEMBER_REMOVED",
-                    details: `Removed member ${userId} from project ${projectId}`,
-                },
-            });
-        });
+            await EngagementLog.create([{
+                userId: loggedInUserId,
+                actionType: "MEMBER_REMOVED",
+                details: `Removed member ${userId} from project ${projectId}`,
+            }], { session });
 
+            await session.commitTransaction();
+        } catch (txnError) {
+            await session.abortTransaction();
+            throw txnError;
+        } finally {
+            session.endSession();
+        }
         // 8. Return Success Response
         return NextResponse.json(
             { message: "Member removed successfully" },

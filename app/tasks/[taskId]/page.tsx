@@ -60,7 +60,7 @@ const itemVariants = {
     visible: {
         y: 0,
         opacity: 1,
-        transition: { type: 'spring', stiffness: 300, damping: 24 } as any
+        transition: { type: 'spring', stiffness: 300, damping: 24 }
     }
 };
 
@@ -116,7 +116,7 @@ export default function TaskDetailsPage({ params }: PageProps) {
                 // Fetch project details to get project name
                 const projectRes = await fetch('/api/projects', { headers });
                 const projects = projectRes.ok ? await projectRes.json() : [];
-                const project = projects.find((p: any) => p.id === taskData.projectId);
+                const project = projects.find((p: { id: string }) => p.id === taskData.projectId);
 
                 // Transform to match component interface
                 const taskDetails: TaskDetails = {
@@ -133,9 +133,9 @@ export default function TaskDetailsPage({ params }: PageProps) {
                 };
 
                 setTask(taskDetails);
-            } catch (err: any) {
+            } catch (err: unknown) {
                 console.error('Task fetch error:', err);
-                setError(err.message || 'Failed to load task details.');
+                setError(err instanceof Error ? err.message : 'Failed to load task details.');
             } finally {
                 setIsLoading(false);
             }
@@ -177,8 +177,8 @@ export default function TaskDetailsPage({ params }: PageProps) {
             setTask({ ...task, status: 'Done' });
             setSuccessMsg('Task successfully marked as completed!');
             setTimeout(() => setSuccessMsg(null), 3500);
-        } catch (err: any) {
-            setError(err.message || 'Failed to update task status. Please try again.');
+        } catch (err: unknown) {
+            setError(err instanceof Error ? err.message : 'Failed to update task status. Please try again.');
         } finally {
             setIsUpdating(false);
         }

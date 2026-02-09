@@ -57,8 +57,8 @@ export default function AddMembersPage({ params }: PageProps) {
 
                 setStudents(studentsData);
                 setCurrentMembers(membersData.members || []);
-            } catch (err: any) {
-                setError(err.message);
+            } catch (err: unknown) {
+                setError(err instanceof Error ? err.message : 'An error occurred fetching data');
             } finally {
                 setIsLoading(false);
             }
@@ -99,8 +99,8 @@ export default function AddMembersPage({ params }: PageProps) {
 
             // Clear success message after 3 seconds
             setTimeout(() => setSuccessMessage(null), 3000);
-        } catch (err: any) {
-            setError(err.message);
+        } catch (err: unknown) {
+            setError(err instanceof Error ? err.message : 'An error occurred adding member');
         } finally {
             setAddingUserId(null);
         }

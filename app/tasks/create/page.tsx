@@ -15,11 +15,7 @@ import {
     CheckCircle2,
     AlertCircle,
     Loader2,
-    Plus,
-    Calendar,
-    Flag,
-    User,
-    Briefcase
+    Plus
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import './CreateTask.css';
@@ -111,13 +107,13 @@ export default function CreateTaskPage() {
                 const data = await response.json();
 
                 // Map API response to Project interface
-                const projectsList: Project[] = data.map((p: any) => ({
+                const projectsList: Project[] = data.map((p: { id: string; title: string }) => ({
                     id: p.id,
                     name: p.title
                 }));
 
                 setProjects(projectsList);
-            } catch (err) {
+            } catch {
                 setErrorMessage("Failed to load projects. Please refresh the page.");
             } finally {
                 setIsLoadingData(false);
@@ -150,7 +146,7 @@ export default function CreateTaskPage() {
                 const data = await response.json();
 
                 // Extract members array and filter for students only
-                const allMembers: Member[] = data.members.map((m: any) => ({
+                const allMembers: Member[] = data.members.map((m: { id: string; name: string; role: 'STUDENT' | 'MENTOR' }) => ({
                     memberId: m.id,
                     name: m.name,
                     role: m.role
@@ -162,7 +158,7 @@ export default function CreateTaskPage() {
                 setStudents(projectStudents);
                 // Reset assignedTo if the previous student is not in the new project
                 setFormData(prev => ({ ...prev, assignedTo: '' }));
-            } catch (err) {
+            } catch {
                 console.error("Failed to fetch students");
                 setStudents([]);
             }

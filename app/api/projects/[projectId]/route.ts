@@ -1,27 +1,21 @@
 import { NextResponse } from "next/server";
 export const dynamic = 'force-dynamic';
-import { prisma, Role } from "@/lib/db";
+import dbConnect, { Role, LeanProject } from "@/lib/db";
+import { Project, ProjectMember, Task, PeerFeedback } from "@/lib/models";
+import mongoose from "mongoose";
 
 // ============================================
 // GET /api/projects/[projectId]
 // ============================================
 // Fetches a single project's details with statistics
-// Authorization:
-// - MENTOR: Can only view their own projects
-// - STUDENT: Can only view projects they're members of
-
 export async function GET(
     request: Request,
-    { params }: { params: Promise<{ projectId: string }> }
+    props: { params: Promise<{ projectId: string }> }
 ) {
     try {
-        // STEP 1: Read Authentication Headers
-        // ====================================
         const userId = request.headers.get("x-user-id");
         const userRole = request.headers.get("x-user-role");
 
-        // STEP 2: Authentication Check
-        // =============================
         if (!userId) {
             return NextResponse.json(
                 { error: "Unauthorized: You must be logged in" },
@@ -29,53 +23,33 @@ export async function GET(
             );
         }
 
-        // STEP 3: Get Project ID from URL
-        // ================================
-        // In Next.js 15+, params is a Promise and must be awaited
-        const { projectId } = await params;
+        const params = await props.params;
+        const projectId = params.projectId;
 
-        // STEP 4: Fetch Project
-        // =====================
-        // Get the project and check if it exists
-        const project = await prisma.project.findUnique({
-            where: { id: projectId },
-        });
+        await dbConnect();
 
-        if (!project) {
+        const projectDoc = await Project.findById(projectId).lean() as unknown as LeanProject;
+
+        if (!projectDoc) {
             return NextResponse.json(
                 { error: "Project not found" },
                 { status: 404 }
             );
         }
 
-        // STEP 5: Authorization Check (Role-Based)
-        // =========================================
-        // Different access rules for MENTOR vs STUDENT
+        const project = { ...projectDoc, id: projectDoc._id.toString(), mentorId: projectDoc.mentorId.toString() };
 
         if (userRole === Role.MENTOR) {
-            // MENTOR AUTHORIZATION
-            // ====================
-            // Mentors can ONLY view projects they created
-            // Check if the project's mentorId matches the logged-in user
-
             if (project.mentorId !== userId) {
                 return NextResponse.json(
                     { error: "Access denied: You can only view your own projects" },
                     { status: 403 }
                 );
             }
-
         } else if (userRole === Role.STUDENT) {
-            // STUDENT AUTHORIZATION
-            // =====================
-            // Students can ONLY view projects they're members of
-            // Check if there's a ProjectMember record for this user + project
-
-            const membership = await prisma.projectMember.findFirst({
-                where: {
-                    projectId: projectId,
-                    userId: userId,
-                },
+            const membership = await ProjectMember.findOne({
+                projectId: projectId,
+                userId: userId,
             });
 
             if (!membership) {
@@ -84,33 +58,16 @@ export async function GET(
                     { status: 403 }
                 );
             }
-
         } else {
-            // INVALID ROLE
-            // ============
             return NextResponse.json(
                 { error: "Invalid user role" },
                 { status: 403 }
             );
         }
 
-        // STEP 6: Calculate Statistics
-        // =============================
-        // Get counts for tasks and members
-        // These are simple aggregations that help the frontend display stats
+        const totalTasks = await Task.countDocuments({ projectId: projectId });
+        const totalMembers = await ProjectMember.countDocuments({ projectId: projectId });
 
-        // Count total tasks in this project
-        const totalTasks = await prisma.task.count({
-            where: { projectId: projectId },
-        });
-
-        // Count total members in this project
-        const totalMembers = await prisma.projectMember.count({
-            where: { projectId: projectId },
-        });
-
-        // STEP 7: Return Project Details
-        // ===============================
         return NextResponse.json(
             {
                 id: project.id,
@@ -124,11 +81,8 @@ export async function GET(
             { status: 200 }
         );
 
-    } catch (error) {
-        // STEP 8: Error Handling
-        // =======================
-        console.error("Error fetching project:", error);
-
+    } catch (err) {
+        console.error("Error fetching project:", err);
         return NextResponse.json(
             { error: "Internal server error" },
             { status: 500 }
@@ -139,16 +93,11 @@ export async function GET(
 // ============================================
 // PUT /api/projects/[projectId]
 // ============================================
-// Updates a project
-// Only MENTORS (project owners) can update their projects
-
 export async function PUT(
     request: Request,
-    { params }: { params: Promise<{ projectId: string }> }
+    props: { params: Promise<{ projectId: string }> }
 ) {
     try {
-        // STEP 1: Authentication
-        // ======================
         const userId = request.headers.get("x-user-id");
         const userRole = request.headers.get("x-user-role");
 
@@ -159,24 +108,18 @@ export async function PUT(
             );
         }
 
-        // STEP 2: Authorization - Mentor Only
-        // ====================================
-        if (userRole !== "MENTOR") {
+        if (userRole !== Role.MENTOR) {
             return NextResponse.json(
                 { error: "Only mentors can update projects" },
                 { status: 403 }
             );
         }
 
-        // STEP 3: Get Project ID
-        // ======================
-        const { projectId } = await params;
+        const params = await props.params;
+        const projectId = params.projectId;
 
-        // STEP 4: Verify Project Exists and Ownership
-        // ============================================
-        const project = await prisma.project.findUnique({
-            where: { id: projectId },
-        });
+        await dbConnect();
+        const project = await Project.findById(projectId).lean() as unknown as LeanProject;
 
         if (!project) {
             return NextResponse.json(
@@ -185,49 +128,49 @@ export async function PUT(
             );
         }
 
-        if (project.mentorId !== userId) {
+        if (project.mentorId.toString() !== userId) {
             return NextResponse.json(
                 { error: "Access denied: You can only update your own projects" },
                 { status: 403 }
             );
         }
 
-        // STEP 5: Parse Request Body
-        // ===========================
         const body = await request.json();
         const { title } = body;
 
         if (!title || title.trim() === "") {
             return NextResponse.json(
-                { error: "Project title is required and cannot be empty" },
+                { error: "Project title is required" },
                 { status: 400 }
             );
         }
 
-        // STEP 6: Update Project
-        // ======================
-        const updatedProject = await prisma.project.update({
-            where: { id: projectId },
-            data: {
-                title: title.trim(),
-            },
-        });
+        const updatedProjectDoc = await Project.findByIdAndUpdate(
+            projectId,
+            { title: title.trim() },
+            { new: true }
+        ).lean() as unknown as LeanProject;
 
-        // STEP 7: Return Updated Project
-        // ===============================
+        if (!updatedProjectDoc) {
+            return NextResponse.json(
+                { error: "Failed to update project" },
+                { status: 500 }
+            );
+        }
+
         return NextResponse.json(
             {
-                id: updatedProject.id,
-                title: updatedProject.title,
-                mentorId: updatedProject.mentorId,
-                createdAt: updatedProject.createdAt,
-                updatedAt: updatedProject.updatedAt,
+                id: updatedProjectDoc._id.toString(),
+                title: updatedProjectDoc.title,
+                mentorId: updatedProjectDoc.mentorId.toString(),
+                createdAt: updatedProjectDoc.createdAt,
+                updatedAt: updatedProjectDoc.updatedAt,
             },
             { status: 200 }
         );
 
-    } catch (error) {
-        console.error("Error updating project:", error);
+    } catch (err) {
+        console.error("Error updating project:", err);
         return NextResponse.json(
             { error: "Internal server error" },
             { status: 500 }
@@ -238,16 +181,11 @@ export async function PUT(
 // ============================================
 // DELETE /api/projects/[projectId]
 // ============================================
-// Deletes a project and all associated data
-// Only MENTORS (project owners) can delete their projects
-
 export async function DELETE(
     request: Request,
-    { params }: { params: Promise<{ projectId: string }> }
+    props: { params: Promise<{ projectId: string }> }
 ) {
     try {
-        // STEP 1: Authentication
-        // ======================
         const userId = request.headers.get("x-user-id");
         const userRole = request.headers.get("x-user-role");
 
@@ -258,24 +196,18 @@ export async function DELETE(
             );
         }
 
-        // STEP 2: Authorization - Mentor Only
-        // ====================================
-        if (userRole !== "MENTOR") {
+        if (userRole !== Role.MENTOR) {
             return NextResponse.json(
                 { error: "Only mentors can delete projects" },
                 { status: 403 }
             );
         }
 
-        // STEP 3: Get Project ID
-        // ======================
-        const { projectId } = await params;
+        const params = await props.params;
+        const projectId = params.projectId;
 
-        // STEP 4: Verify Project Exists and Ownership
-        // ============================================
-        const project = await prisma.project.findUnique({
-            where: { id: projectId },
-        });
+        await dbConnect();
+        const project = await Project.findById(projectId).lean() as unknown as LeanProject;
 
         if (!project) {
             return NextResponse.json(
@@ -284,33 +216,38 @@ export async function DELETE(
             );
         }
 
-        if (project.mentorId !== userId) {
+        if (project.mentorId.toString() !== userId) {
             return NextResponse.json(
                 { error: "Access denied: You can only delete your own projects" },
                 { status: 403 }
             );
         }
 
-        // STEP 5: Delete Project
-        // ======================
-        // Note: Cascade deletion is handled by Prisma schema
-        // This will automatically delete:
-        // - ProjectMembers
-        // - Tasks
-        // - PeerFeedback
-        await prisma.project.delete({
-            where: { id: projectId },
-        });
+        const session = await mongoose.startSession();
+        try {
+            session.startTransaction();
 
-        // STEP 6: Return Success
-        // ======================
+            await ProjectMember.deleteMany({ projectId: projectId }, { session });
+            await Task.deleteMany({ projectId: projectId }, { session });
+            await PeerFeedback.deleteMany({ projectId: projectId }, { session });
+
+            await Project.findByIdAndDelete(projectId, { session });
+
+            await session.commitTransaction();
+        } catch (txnError) {
+            await session.abortTransaction();
+            throw txnError;
+        } finally {
+            session.endSession();
+        }
+
         return NextResponse.json(
             { message: "Project deleted successfully" },
             { status: 200 }
         );
 
-    } catch (error) {
-        console.error("Error deleting project:", error);
+    } catch (err) {
+        console.error("Error deleting project:", err);
         return NextResponse.json(
             { error: "Internal server error" },
             { status: 500 }

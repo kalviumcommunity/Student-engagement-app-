@@ -9,12 +9,11 @@
  */
 
 import React, { useState, useEffect, use } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import {
     ArrowLeft,
     Users,
     Plus,
-    LayoutGrid,
     CheckCircle2,
     Calendar,
     ExternalLink,
@@ -62,7 +61,7 @@ const itemVariants = {
     visible: {
         y: 0,
         opacity: 1,
-        transition: { type: 'spring', stiffness: 260, damping: 20 } as any
+        transition: { type: 'spring', stiffness: 260, damping: 20 }
     }
 };
 
@@ -108,7 +107,7 @@ export default function MentorProjectPage({ params }: PageProps) {
                 }
 
                 const projects = await projectRes.json();
-                const currentProject = projects.find((p: any) => p.id === projectId);
+                const currentProject = projects.find((p: { id: string }) => p.id === projectId);
 
                 if (!currentProject) {
                     setError('Project not found');
@@ -119,7 +118,7 @@ export default function MentorProjectPage({ params }: PageProps) {
                 // Fetch tasks for this project
                 const tasksRes = await fetch('/api/tasks', { headers });
                 const tasks = tasksRes.ok ? await tasksRes.json() : [];
-                const projectTasks = tasks.filter((t: any) => t.projectId === projectId);
+                const projectTasks = tasks.filter((t: { projectId: string }) => t.projectId === projectId);
 
                 // Fetch project members
                 const membersRes = await fetch(`/api/projects/${projectId}/members`, { headers });
@@ -129,8 +128,8 @@ export default function MentorProjectPage({ params }: PageProps) {
                 // Transform members to match component interface
                 // Filter to only show students (exclude mentor)
                 const transformedMembers: Member[] = projectMembers
-                    .filter((m: any) => m.role === 'STUDENT')
-                    .map((m: any) => ({
+                    .filter((m: { role: string }) => m.role === 'STUDENT')
+                    .map((m: { name?: string; email?: string }) => ({
                         name: m.name || 'Unknown',
                         role: 'Student',
                         email: m.email || 'No email'
@@ -138,7 +137,7 @@ export default function MentorProjectPage({ params }: PageProps) {
 
                 // Calculate task statistics
                 const totalTasks = projectTasks.length;
-                const completedTasks = projectTasks.filter((t: any) => t.status === 'DONE').length;
+                const completedTasks = projectTasks.filter((t: { status: string }) => t.status === 'DONE').length;
                 const pendingTasks = totalTasks - completedTasks;
                 const progressPercentage = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
 
@@ -158,9 +157,9 @@ export default function MentorProjectPage({ params }: PageProps) {
                 };
 
                 setProject(projectDetails);
-            } catch (err: any) {
+            } catch (err: unknown) {
                 console.error('Project detail fetch error:', err);
-                setError(err.message || "Failed to load project details.");
+                setError(err instanceof Error ? err.message : "Failed to load project details.");
             } finally {
                 setIsLoading(false);
             }

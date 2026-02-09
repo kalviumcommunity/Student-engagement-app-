@@ -1,0 +1,86 @@
+﻿
+> student-engagement-app@0.1.0 build
+> next build
+
+   Γû▓ Next.js 15.1.6
+   - Environments: .env
+
+   Creating an optimized production build ...
+node.exe : Failed to 
+compile.
+At line:1 char:1
++ & "C:\Program Files
+\nodejs/node.exe" 
+"C:\Program 
+Files\nodejs/node_mo 
+...
++ ~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~
+    + CategoryInfo   
+           : NotSpe  
+  cified: (Failed    
+ to compile.:Stri    
+ng) [], RemoteEx    
+ception
+    + FullyQualified 
+   ErrorId : Native  
+  CommandError
+ 
+
+./app/api/auth/login/
+route.ts
+Module not found: 
+Can't resolve 
+'bcryptjs'
+
+https://nextjs.org/do
+cs/messages/module-no
+t-found
+
+./app/api/auth/regist
+er/route.ts
+Module not found: 
+Can't resolve 
+'bcryptjs'
+
+https://nextjs.org/do
+cs/messages/module-no
+t-found
+
+./app/api/projects/[p
+rojectId]/members/[us
+erId]/route.ts
+Module not found: 
+Can't resolve 
+'mongoose'
+
+https://nextjs.org/do
+cs/messages/module-no
+t-found
+
+./app/api/projects/[p
+rojectId]/route.ts
+Module not found: 
+Can't resolve 
+'mongoose'
+
+https://nextjs.org/do
+cs/messages/module-no
+t-found
+
+./app/api/projects/cr
+eate/route.ts
+Module not found: 
+Can't resolve 
+'mongoose'
+
+https://nextjs.org/do
+cs/messages/module-no
+t-found
+
+
+> Build failed 
+because of webpack 
+errors

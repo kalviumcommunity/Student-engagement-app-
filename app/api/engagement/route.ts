@@ -1,79 +1,65 @@
 import { NextResponse } from "next/server";
 export const dynamic = 'force-dynamic';
-import { prisma, ActionType } from "@/lib/db";
+import dbConnect, { ActionType, logEngagement } from "@/lib/db";
 
 // ============================================
 // POST /api/engagement
 // ============================================
-// Logs user engagement activities
-// Authorization: Any authenticated user can log their own engagement
-
+// Logs a student engagement action
+// Used by the frontend to track things like 'VIEW_DASHBOARD', 'CLICK_TASK', etc.
 export async function POST(request: Request) {
     try {
-        // STEP 1: Authentication
-        // =====================
+        // STEP 1: Authentication Check
+        // =============================
         const userId = request.headers.get("x-user-id");
-        const userRole = request.headers.get("x-user-role");
-
         if (!userId) {
             return NextResponse.json(
-                { error: "Unauthorized: Missing authentication credentials" },
+                { error: "Unauthorized: Missing user ID" },
                 { status: 401 }
             );
         }
 
-        // STEP 2: Parse Request Body
-        // ===========================
+        // STEP 2: Parse and Validate Request Body
+        // ========================================
         const body = await request.json();
-        const { projectId, actionType, details } = body;
+        const { actionType, details } = body;
 
-        // STEP 3: Validate Required Fields
-        // =================================
-        if (!actionType) {
+        // Ensure actionType is a valid ActionType enum value
+        if (!Object.values(ActionType).includes(actionType as ActionType)) {
             return NextResponse.json(
-                { error: "Missing required field: actionType" },
+                { error: "Invalid action type" },
                 { status: 400 }
             );
         }
 
-        // STEP 4: Validate ActionType Enum
-        // =================================
-        const validActionTypes = Object.values(ActionType);
-        if (!validActionTypes.includes(actionType)) {
-            return NextResponse.json(
-                {
-                    error: `Invalid actionType. Must be one of: ${validActionTypes.join(", ")}`
-                },
-                { status: 400 }
-            );
-        }
+        // STEP 3: Connect to Database
+        // ===========================
+        await dbConnect();
 
-        // STEP 5: Create Engagement Log
-        // ==============================
-        // Note: projectId is optional metadata, not used for authorization
-        const engagementLog = await prisma.engagementLog.create({
-            data: {
-                userId: userId,
-                actionType: actionType,
-                details: details || null,
-            },
-        });
+        // STEP 4: Log the Engagement
+        // ==========================
+        // We use the helper function from lib/db.ts to ensure consistency
+        const log = await logEngagement(
+            userId,
+            actionType as ActionType,
+            details || ""
+        );
 
-        // STEP 7: Return Success Response
-        // ================================
+        // STEP 5: Return Success
+        // ======================
         return NextResponse.json(
             {
-                id: engagementLog.id,
-                userId: engagementLog.userId,
-                actionType: engagementLog.actionType,
-                details: engagementLog.details,
-                createdAt: engagementLog.createdAt,
+                success: true,
+                logId: log._id.toString(),
+                action: actionType,
             },
             { status: 201 }
         );
 
-    } catch (error) {
-        console.error("Error logging engagement:", error);
+    } catch (err) {
+        // STEP 6: Error Handling
+        // =======================
+        console.error("Error logging engagement:", err);
         return NextResponse.json(
             { error: "Internal server error" },
             { status: 500 }

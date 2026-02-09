@@ -16,8 +16,6 @@ import { Variants } from "framer-motion"
 import {
     LogIn,
     Loader2,
-    Mail,
-    Lock,
     Chrome,
     Github,
     AlertCircle
@@ -44,8 +42,8 @@ export default function LoginPage() {
 
         try {
             await login(email, password);
-        } catch (err: any) {
-            setError(err.message);
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'Login failed');
             setIsLoading(false);
         }
     };

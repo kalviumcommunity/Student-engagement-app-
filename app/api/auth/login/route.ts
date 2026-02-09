@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 export const dynamic = 'force-dynamic';
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { prisma, ActionType, logEngagement } from "@/lib/db";
+import dbConnect, { ActionType, logEngagement, LeanUser } from "@/lib/db";
+import { User } from "@/lib/models";
 
 import { z } from "zod";
 
@@ -29,7 +30,6 @@ export async function POST(request: NextRequest) {
                     success: false,
                     error: "Validation failed",
                     details: validationResult.error.format(),
-
                 },
                 { status: 400 }
             );
@@ -37,21 +37,14 @@ export async function POST(request: NextRequest) {
 
         const { email, password } = validationResult.data;
 
+        // Connect to database
+        await dbConnect();
+
         // Find user by email
-        const user = await prisma.user.findUnique({
-            where: { email },
-            select: {
-                id: true,
-                name: true,
-                email: true,
-                password: true,
-                role: true,
-                createdAt: true,
-            },
-        });
+        const existingUser = await User.findOne({ email }).lean() as unknown as LeanUser;
 
         // Check if user exists
-        if (!user) {
+        if (!existingUser) {
             return NextResponse.json(
                 {
                     success: false,
@@ -62,7 +55,7 @@ export async function POST(request: NextRequest) {
         }
 
         // Verify password
-        const isPasswordValid = await bcrypt.compare(password, user.password);
+        const isPasswordValid = await bcrypt.compare(password || "", existingUser.password || "");
         if (!isPasswordValid) {
             return NextResponse.json(
                 {
@@ -72,6 +65,14 @@ export async function POST(request: NextRequest) {
                 { status: 401 }
             );
         }
+
+        const user = {
+            id: existingUser._id.toString(),
+            name: existingUser.name,
+            email: existingUser.email,
+            role: existingUser.role,
+            createdAt: existingUser.createdAt,
+        };
 
         // Log the login engagement
         await logEngagement(user.id, ActionType.LOGIN, `User logged in from ${request.headers.get("user-agent")}`);
@@ -87,15 +88,12 @@ export async function POST(request: NextRequest) {
             { expiresIn: JWT_EXPIRES_IN }
         );
 
-        // Remove password from response
-        const { password: _, ...userWithoutPassword } = user;
-
         // Create response
         const response = NextResponse.json(
             {
                 success: true,
                 message: "Login successful",
-                user: userWithoutPassword,
+                user,
                 token,
             },
             { status: 200 }
@@ -113,8 +111,8 @@ export async function POST(request: NextRequest) {
         });
 
         return response;
-    } catch (error) {
-        console.error("Login error:", error);
+    } catch (err) {
+        console.error("Login error:", err);
         return NextResponse.json(
             {
                 success: false,
@@ -147,19 +145,13 @@ export async function GET(request: NextRequest) {
             role: string;
         };
 
-        // Get user details
-        const user = await prisma.user.findUnique({
-            where: { id: decoded.userId },
-            select: {
-                id: true,
-                name: true,
-                email: true,
-                role: true,
-                createdAt: true,
-            },
-        });
+        // Connect to database
+        await dbConnect();
 
-        if (!user) {
+        // Get user details
+        const userDoc = await User.findById(decoded.userId).select("-password").lean() as unknown as LeanUser;
+
+        if (!userDoc) {
             return NextResponse.json(
                 {
                     success: false,
@@ -169,6 +161,14 @@ export async function GET(request: NextRequest) {
             );
         }
 
+        const user = {
+            id: userDoc._id.toString(),
+            name: userDoc.name,
+            email: userDoc.email,
+            role: userDoc.role,
+            createdAt: userDoc.createdAt,
+        };
+
         return NextResponse.json(
             {
                 success: true,
@@ -176,7 +176,8 @@ export async function GET(request: NextRequest) {
             },
             { status: 200 }
         );
-    } catch (error) {
+    } catch (err) {
+        console.error("Login verification error:", err);
         return NextResponse.json(
             {
                 success: false,

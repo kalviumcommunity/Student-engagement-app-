@@ -59,7 +59,6 @@ const cardVariants: Variants = {
 // --- MAIN COMPONENT ---
 
 export default function FeedbackPage() {
-    const router = useRouter();
     const { user } = useAuth();
     const [feedbacks, setFeedbacks] = useState<Feedback[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -93,7 +92,7 @@ export default function FeedbackPage() {
                 const feedbackData = await res.json();
 
                 // Transform API data to match component interface
-                const transformedFeedback: Feedback[] = feedbackData.map((f: any) => ({
+                const transformedFeedback: Feedback[] = feedbackData.map((f: { id: string; comment?: string; createdAt: string }) => ({
                     id: f.id,
                     mentorName: 'Peer', // We'd need to fetch user names separately
                     projectName: 'Project', // We'd need to fetch project names separately
@@ -103,8 +102,8 @@ export default function FeedbackPage() {
 
                 setFeedbacks(transformedFeedback);
 
-            } catch (err: any) {
-                setError(err.message || 'Failed to fetch feedback. Please try again later.');
+            } catch (err: unknown) {
+                setError(err instanceof Error ? err.message : 'Failed to fetch feedback. Please try again later.');
             } finally {
                 setIsLoading(false);
             }
@@ -191,7 +190,7 @@ export default function FeedbackPage() {
                                 </div>
                                 <p className="feedbackContent">
                                     <MessageSquare size={16} style={{ display: 'inline', marginRight: '10px', opacity: 0.5, verticalAlign: 'top', marginTop: '4px' }} />
-                                    "{item.comment}"
+                                    &quot;{item.comment}&quot;
                                 </p>
                             </motion.div>
                         ))
